@@ -1,22 +1,18 @@
 package adhdmc.scythe;
 
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MessageHandler {
+    public static FileConfiguration config = Scythe.plugin.getConfig();
     private static final Pattern hexPattern = Pattern.compile("(&#[a-fA-F0-9]{6})");
     public static String prefix;
-    public static String toggleOn;
-    public static String toggleOff;
-    public static String noCommand;
-    public static String configReload;
-    public static String noPermission;
-    public static String notAPlayer;
-    public static String helpMain;
-    public static String helpToggle;
-    public static String helpReload;
+    public static String toggleOn, toggleOff, configReload;
+    public static String noCommand, noPermission, notAPlayer;
+    public static String helpMain, helpToggle, helpReload;
 
     public static String colorParse(String s) {
         Matcher matcher = hexPattern.matcher(s);
@@ -29,16 +25,17 @@ public class MessageHandler {
         s = ChatColor.translateAlternateColorCodes('&', s);
         return s;
     }
+
     public static void loadPluginMsgs(){
-    prefix = colorParse("&6&l[&eScythe&6&l]&r ");
-    toggleOn = colorParse("&aScythe toggled on!");
-    toggleOff = colorParse("&cScythe toggled off!");
-    noCommand = colorParse("&cUnknown Command");
-    configReload = colorParse("&aScythe Config Reloaded!");
-    noPermission = colorParse("&cYou do not have the required permissions to run this command");
-    notAPlayer = "Sorry! This command can only be run by a player";
-    helpMain = colorParse("&7Scythe allows players to harvest grown crops without needing to replant");
-    helpToggle = colorParse("&6/scythe toggle \n&7Toggle scythe on or off");
-    helpReload = colorParse("&6/scythe reload \n&7Reloads config settings");
+    prefix = colorParse(config.getString("Plugin Prefix"));
+    toggleOn = colorParse(config.getString("Toggle On"));
+    toggleOff = colorParse(config.getString("Toggle Off"));
+    noCommand = colorParse(config.getString("No Command"));
+    configReload = colorParse(config.getString("Config Reload"));
+    noPermission = colorParse(config.getString("No Permission"));
+    notAPlayer = colorParse(config.getString("Not A Player"));
+    helpMain = colorParse(config.getString("Help Main"));
+    helpToggle = colorParse(config.getString("Help Toggle"));
+    helpReload = colorParse(config.getString("Help Reload"));
     }
 }

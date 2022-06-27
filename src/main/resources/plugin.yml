@@ -1,7 +1,7 @@
 name: Scythe
 version: '${project.version}'
 main: adhdmc.scythe.Scythe
-api-version: 1.19
+api-version: 1.16
 permissions:
   scythe.use:
     description: use
