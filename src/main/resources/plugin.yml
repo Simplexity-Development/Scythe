@@ -1,0 +1,14 @@
+name: Scythe
+version: '${project.version}'
+main: adhdmc.scythe.Scythe
+api-version: 1.19
+permissions:
+  scythe.use:
+    description: use
+  scythe.toggle:
+    description: toggle
+  scythe.reload:
+    description: reload
+commands:
+  scythe:
+
