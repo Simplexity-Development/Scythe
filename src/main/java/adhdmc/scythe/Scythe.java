@@ -13,12 +13,17 @@ public final class Scythe extends JavaPlugin {
 
     public void onEnable() {
         plugin = this;
-        getServer().getPluginManager().registerEvents(new InteractListener(), this);
+        if (plugin.getServer().getPluginManager().isPluginEnabled("CoreProtect")){
+            getServer().getPluginManager().registerEvents(new InteractListener(), this);
+        } else {
+            getServer().getPluginManager().registerEvents(new InteractListenerDependCoreprotect(), this);
+        }
         this.getCommand("scythe").setExecutor(new CommandHandler());
         configDefaults();
-        MessageHandler.loadPluginMsgs();
         registerCommands();
+        MessageHandler.loadPluginMsgs();
     }
+
     private void configDefaults(){
         this.saveDefaultConfig();
         getConfig().addDefault("Require Hoe", false);
@@ -33,6 +38,7 @@ public final class Scythe extends JavaPlugin {
         getConfig().addDefault("Help Toggle", "&6/scythe toggle \n&7Toggle scythe on or off");
         getConfig().addDefault("Help Reload", "&6/scythe reload \n&7Reloads config settings");
     }
+
     private void registerCommands() {
         CommandHandler.subcommandList.put("toggle", new ToggleCommand());
         CommandHandler.subcommandList.put("reload", new ReloadCommand());

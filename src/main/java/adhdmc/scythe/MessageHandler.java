@@ -2,7 +2,6 @@ package adhdmc.scythe;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

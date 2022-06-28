@@ -4,11 +4,13 @@ main: adhdmc.scythe.Scythe
 api-version: 1.16
 permissions:
   scythe.use:
-    description: use
+    description: Allow players to use Scythe Functionality
   scythe.toggle:
-    description: toggle
+    description: Allow players to toggle Scythe on or off
   scythe.reload:
-    description: reload
+    description: Allows user to reload the Scythe plugin
 commands:
   scythe:
+softdepend:
+  - CoreProtect
 
