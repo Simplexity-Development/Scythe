@@ -7,7 +7,7 @@ import java.util.List;
 
 public class HelpCommand extends SubCommand{
     public HelpCommand(){
-        super ("help","Villager Info help", "/vill help");
+        super ("help","Scythe Info", "/scythe help");
     }
 
     @Override

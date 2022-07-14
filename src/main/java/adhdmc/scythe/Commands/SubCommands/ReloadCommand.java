@@ -17,6 +17,7 @@ public class ReloadCommand extends SubCommand {
     public void doThing(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)|| sender.hasPermission("scythe.reload")) {
             Scythe.plugin.reloadConfig();
+            MessageHandler.loadPluginMsgs();
             sender.sendMessage(MessageHandler.configReload);
             return;
         }

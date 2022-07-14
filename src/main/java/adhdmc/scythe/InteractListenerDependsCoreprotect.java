@@ -24,16 +24,17 @@ import java.util.List;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class InteractListenerDependCoreprotect implements Listener {
+public class InteractListenerDependsCoreprotect implements Listener {
 
     List<Material> farmables = Arrays.asList(Material.CARROTS, Material.COCOA, Material.NETHER_WART, Material.POTATOES, Material.WHEAT, Material.BEETROOTS);
+    CoreProtectAPI api = getCoreProtect();
 
     @EventHandler
     public void rightClickFarmable(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null) {
             return;
         }
-        if (event.getHand().equals(EquipmentSlot.OFF_HAND)) {
+        if (event.getHand() == null || event.getHand().equals(EquipmentSlot.OFF_HAND)) {
             return;
         }
         if (!(farmables.contains(event.getClickedBlock().getType()))) {
@@ -64,14 +65,55 @@ public class InteractListenerDependCoreprotect implements Listener {
             facing = clickedCocoa.getFacing();
             Cocoa cocoaData = (Cocoa) Bukkit.createBlockData(Material.COCOA);
             event.setCancelled(true);
+            api.logRemoval(
+                player.getName(),
+                clickedSpot.getLocation(),
+                clickedSpot.getType(),
+                clickedCocoa);
             event.getClickedBlock().breakNaturally(itemUsed);
             cocoaData.setFacing(facing);
             clickedSpot.setBlockData(cocoaData);
+            api.logPlacement(
+                player.getName(),
+                clickedSpot.getLocation(),
+                clickedSpot.getType(),
+                cocoaData);
             return;
             }
         event.setCancelled(true);
+        api.logRemoval(
+            player.getName(),
+            clickedSpot.getLocation(),
+            clickedSpot.getType(),
+             null);
         event.getClickedBlock().breakNaturally(itemUsed);
         event.getClickedBlock().setType(clickedMaterial);
+        api.logPlacement(
+            player.getName(),
+            clickedSpot.getLocation(),
+            clickedSpot.getType(),
+            null);
+    }
+    private CoreProtectAPI getCoreProtect() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("CoreProtect");
+
+        // Check that CoreProtect is loaded
+        if (!(plugin instanceof CoreProtect)) {
+            return null;
+        }
+
+        // Check that the API is enabled
+        CoreProtectAPI CoreProtect = ((CoreProtect) plugin).getAPI();
+        if (!CoreProtect.isEnabled()) {
+            return null;
+        }
+
+        // Check that a compatible version of the API is loaded
+        if (CoreProtect.APIVersion() < 9) {
+            return null;
+        }
+
+        return CoreProtect;
     }
 }
 
