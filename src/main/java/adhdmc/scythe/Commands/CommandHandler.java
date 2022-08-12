@@ -30,10 +30,10 @@ public class CommandHandler implements CommandExecutor, TabExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length == 0){
             sender.sendMessage(mM.deserialize("<click:open_url:'https://github.com/RhythmicSys/Scythe'><hover:show_text:'<gray>Click here to visit the GitHub!'>" +
-                    "<green>Scythe Version: <version> </hover></click>| Authors: " +
+                    "<green>Scythe Version: <version> </hover></click><aqua>| Authors:" +
                     "<click:open_url:'https://github.com/RhythmicSys'>" +
                     "<hover:show_text:'<gray>Click here to visit Rhythmic\\'s GitHub!'>" +
-                    "Rhythmic", Placeholder.parsed("version", String.valueOf(Scythe.version))));
+                    "<dark_aqua> Rhythmic", Placeholder.parsed("version", String.valueOf(Scythe.version))));
             return true;
         }
         String command = args[0].toLowerCase();
