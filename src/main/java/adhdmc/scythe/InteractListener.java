@@ -1,14 +1,17 @@
 package adhdmc.scythe;
 
+import com.destroystokyo.paper.MaterialTags;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.type.Cocoa;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -21,9 +24,7 @@ import java.util.List;
 
 public class InteractListener implements Listener {
 
-    List<Material> farmables = Arrays.asList(Material.CARROTS, Material.COCOA, Material.NETHER_WART, Material.POTATOES, Material.WHEAT, Material.BEETROOTS);
-
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void rightClickFarmable(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null) {
             return;
@@ -31,16 +32,15 @@ public class InteractListener implements Listener {
         if (event.getHand() == null || event.getHand().equals(EquipmentSlot.OFF_HAND)) {
             return;
         }
-        if (!(farmables.contains(event.getClickedBlock().getType()))) {
+        Material clickedMaterial = event.getClickedBlock().getType();
+        if (!Tag.CROPS.isTagged(clickedMaterial) && clickedMaterial != Material.COCOA && clickedMaterial != Material.NETHER_WART) {
             return;
         }
         Player player = event.getPlayer();
         Block clickedSpot = event.getClickedBlock();
-        Material clickedMaterial = clickedSpot.getType();
         Ageable clickedCrop = (Ageable) clickedSpot.getBlockData();
         ItemStack itemUsed = player.getInventory().getItemInMainHand();
-        String itemUsedName = itemUsed.toString();
-        BlockFace facing = null;
+        BlockFace facing;
         PersistentDataContainer playerPDC = player.getPersistentDataContainer();
         if (clickedCrop.getMaximumAge() != clickedCrop.getAge()) {
             return;
@@ -51,7 +51,7 @@ public class InteractListener implements Listener {
         if (playerPDC.has(new NamespacedKey(Scythe.plugin, "toggle"), PersistentDataType.STRING) && playerPDC.get(new NamespacedKey(Scythe.plugin, "toggle"), PersistentDataType.STRING).equals("false")){
             return;
         }
-        if (Scythe.plugin.getConfig().getBoolean("Require Hoe") && !itemUsedName.contains("_HOE")){
+        if (MessageHandler.requireHoe && !MaterialTags.HOES.isTagged(itemUsed)){
             return;
         }
         if (clickedMaterial.equals(Material.COCOA)){

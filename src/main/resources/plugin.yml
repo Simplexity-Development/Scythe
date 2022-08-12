@@ -1,16 +1,20 @@
 name: Scythe
 version: '${project.version}'
 main: adhdmc.scythe.Scythe
-api-version: 1.16
+api-version: 1.18
 permissions:
   scythe.use:
     description: Allow players to use Scythe Functionality
+    default: op
   scythe.toggle:
     description: Allow players to toggle Scythe on or off
+    default: op
   scythe.reload:
     description: Allows user to reload the Scythe plugin
+    default: op
 commands:
   scythe:
+    description: base command for Scythe plugin
 softdepend:
   - CoreProtect
 

@@ -1,40 +1,47 @@
 package adhdmc.scythe;
 
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MessageHandler {
     public static FileConfiguration config = Scythe.plugin.getConfig();
-    private static final Pattern hexPattern = Pattern.compile("(&#[a-fA-F0-9]{6})");
-    public static String prefix;
-    public static String toggleOn, toggleOff, configReload;
-    public static String noCommand, noPermission, notAPlayer;
-    public static String helpMain, helpToggle, helpReload;
-
-    public static String colorParse(String s) {
-        Matcher matcher = hexPattern.matcher(s);
-        while (matcher.find()) {
-            String colorReplace = s.substring(matcher.start(), matcher.end());
-            String colorHex = s.substring(matcher.start()+1, matcher.end());
-            s = s.replace(colorReplace, "" + net.md_5.bungee.api.ChatColor.of(colorHex));
-            matcher = hexPattern.matcher(s);
-        }
-        s = ChatColor.translateAlternateColorCodes('&', s);
-        return s;
+    public static boolean requireHoe;
+    private static final HashMap<Message, String> messageMap = new HashMap<>();
+    public enum Message {
+        PREFIX, TOGGLE_ON, TOGGLE_OFF, UNKNOWN_COMMAND, CONFIG_RELOAD, NO_PERMISSION,
+        NOT_A_PLAYER, HELP_MAIN, HELP_TOGGLE, HELP_RELOAD
+    }
+    public static void configParser(){
+        FileConfiguration config = Scythe.plugin.getConfig();
+        messageMap.clear();
+        requireHoe = false;
+        requireHoe = config.getBoolean("require-hoe", false);
+        messageMap.put(Message.PREFIX,
+                config.getString("prefix","<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset>"));
+        messageMap.put(Message.TOGGLE_ON,
+                config.getString("toggle-on", "<green>Scythe toggled on!"));
+        messageMap.put(Message.TOGGLE_OFF,
+                config.getString("toggle-off", "<red>Scythe toggled off!"));
+        messageMap.put(Message.UNKNOWN_COMMAND,
+                config.getString("unknown-command", "<red>Unknown Command"));
+        messageMap.put(Message.CONFIG_RELOAD,
+                config.getString("config-reload", "<gold>Scythe Config Reloaded!"));
+        messageMap.put(Message.NO_PERMISSION,
+                config.getString("no-permission", "<red>You do not have the required permissions to run this command"));
+        messageMap.put(Message.NOT_A_PLAYER,
+                config.getString("not-a-player", "Sorry! This command can only be run by a player"));
+        messageMap.put(Message.HELP_MAIN,
+                config.getString("help-main", "<grey>Scythe allows players to harvest grown crops without needing to replant"));
+        messageMap.put(Message.HELP_TOGGLE,
+                config.getString("help-toggle", "<yellow>/scythe toggle \n<grey>• Toggle scythe on or off"));
+        messageMap.put(Message.HELP_RELOAD,
+                config.getString("help-reload", "<yellow>/scythe reload \n<grey>• Reloads config settings"));
+    }
+    public static Map<Message, String> getMessageMap() {
+        return Collections.unmodifiableMap(messageMap);
     }
 
-    public static void loadPluginMsgs(){
-    prefix = colorParse(config.getString("Plugin Prefix"));
-    toggleOn = colorParse(config.getString("Toggle On"));
-    toggleOff = colorParse(config.getString("Toggle Off"));
-    noCommand = colorParse(config.getString("No Command"));
-    configReload = colorParse(config.getString("Config Reload"));
-    noPermission = colorParse(config.getString("No Permission"));
-    notAPlayer = colorParse(config.getString("Not A Player"));
-    helpMain = colorParse(config.getString("Help Main"));
-    helpToggle = colorParse(config.getString("Help Toggle"));
-    helpReload = colorParse(config.getString("Help Reload"));
-    }
 }

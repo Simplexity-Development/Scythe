@@ -1,14 +1,14 @@
 #Scythe
-Require Hoe: false
+require-hoe: false
 
 #Lang Options
-Plugin Prefix: "&6&l[&eScythe&6&l]&r "
-Toggle On: "&aScythe toggled on!"
-Toggle Off: "&cScythe toggled off!"
-No Command: "&cUnknown Command"
-Config Reload: "&aScythe Config Reloaded!"
-No Permission: "&cYou do not have the required permissions to run this command"
-Not A Player: "Sorry! This command can only be run by a player"
-Help Main: "&7Scythe allows players to harvest grown crops without needing to replant"
-Help Toggle: "&6/scythe toggle \n&7Toggle scythe on or off"
-Help Reload: "&6/scythe reload \n&7Reloads config settings"
+prefix: "<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset> "
+toggle-on: "<green>Scythe toggled on!"
+toggle-off: "<red>Scythe toggled off!"
+unknown-command: "<red>Unknown Command. Use /scythe help to see commands list."
+config-reload: "<gold>Scythe Config Reloaded!"
+no-permission: "<red>You do not have the required permissions to run this command"
+not-a-player: "Sorry! This command can only be run by a player"
+help-main: "<grey>Scythe allows players to harvest grown crops without needing to replant"
+help-toggle: "<yellow>/scythe toggle \n<grey>• Toggle scythe on or off"
+help-reload: "<yellow>/scythe reload \n<grey>• Reloads config settings"
