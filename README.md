@@ -2,7 +2,7 @@
 
 A basic auto-harvest, auto-replant plugin.
 <br>Right-click or break a full-grown crop to harvest it
-<
+
 
 **Default Behavior**
 ----
@@ -24,3 +24,11 @@ A basic auto-harvest, auto-replant plugin.
 **require-hoe**
 <br>
 ![require-hoe](https://user-images.githubusercontent.com/45906780/184274608-1331fe57-5029-4a72-9d45-27888e6a99b2.gif)
+
+## Permissions
+
+| Permission | Description | Default |
+|----|----|----|
+| scythe.use | Allow players to use Scythe Functionality | op |
+| scythe.toggle | Allow players to toggle Scythe on or off | op |
+| scythe.reload | Allows user to reload the Scythe plugin | op |
