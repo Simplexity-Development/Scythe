@@ -1,6 +1,14 @@
 #Scythe
 require-hoe: false
-
+allow-right-click-to-harvest: true
+#crops the plugin should work on
+crops:
+  - BEETROOTS
+  - CARROTS
+  - COCOA
+  - NETHER_WART
+  - POTATOES
+  - WHEAT
 #Lang Options
 prefix: "<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset> "
 toggle-on: "<green>Scythe toggled on!"

@@ -1,6 +1,6 @@
 package adhdmc.scythe.Commands.SubCommands;
 
-import adhdmc.scythe.MessageHandler;
+import adhdmc.scythe.ConfigHandler;
 import adhdmc.scythe.Scythe;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.NamespacedKey;
@@ -11,44 +11,45 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class ToggleCommand extends SubCommand {
-    Map<MessageHandler.Message, String> msgs = MessageHandler.getMessageMap();
+    Map<ConfigHandler.Message, String> msgs = ConfigHandler.getMessageMap();
     MiniMessage mM = MiniMessage.miniMessage();
-    NamespacedKey toggle = new NamespacedKey(Scythe.plugin, "toggle");
+    public static NamespacedKey functionToggle = new NamespacedKey(Scythe.plugin, "functiontoggle");
+    String enabled = Scythe.replantingEnabled;
+    String disabled = Scythe.replantingDisabled;
 
     public ToggleCommand() {
         super("toggle", "Toggles scythe on and off","/scythe toggle");
     }
     public void doThing(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(mM.deserialize(msgs.get(MessageHandler.Message.NOT_A_PLAYER)));
+            sender.sendMessage(mM.deserialize(msgs.get(ConfigHandler.Message.NOT_A_PLAYER)));
             return;
         }
         if (!(sender.hasPermission(Scythe.togglePermission) && sender.hasPermission(Scythe.usePermission))) {
-            sender.sendMessage(mM.deserialize(msgs.get(MessageHandler.Message.PREFIX) + msgs.get(MessageHandler.Message.NO_PERMISSION)));
+            sender.sendMessage(mM.deserialize(msgs.get(ConfigHandler.Message.PREFIX) + msgs.get(ConfigHandler.Message.NO_PERMISSION)));
             return;
         }
         if (toggleSetting((Player) sender)) {
-            sender.sendMessage(mM.deserialize(msgs.get(MessageHandler.Message.PREFIX) + msgs.get(MessageHandler.Message.TOGGLE_ON)));
+            sender.sendMessage(mM.deserialize(msgs.get(ConfigHandler.Message.PREFIX) + msgs.get(ConfigHandler.Message.TOGGLE_ON)));
             return;
         }
-        sender.sendMessage(mM.deserialize(msgs.get(MessageHandler.Message.PREFIX) + msgs.get(MessageHandler.Message.TOGGLE_OFF)));
+        sender.sendMessage(mM.deserialize(msgs.get(ConfigHandler.Message.PREFIX) + msgs.get(ConfigHandler.Message.TOGGLE_OFF)));
     }
 
     private boolean toggleSetting(Player player) {
         PersistentDataContainer pdc = player.getPersistentDataContainer();
-        if (pdc.has(toggle, PersistentDataType.STRING)) {
-            String pdcToggle = pdc.get(toggle, PersistentDataType.STRING);
-            if (pdcToggle != null && pdcToggle.equals("true")) {
-                pdc.set(toggle, PersistentDataType.STRING, "false");
+        if (pdc.get(functionToggle, PersistentDataType.STRING) != null) {
+            String pdcToggle = pdc.get(functionToggle, PersistentDataType.STRING);
+            if (pdcToggle != null && pdcToggle.equals(enabled)) {
+                pdc.set(functionToggle, PersistentDataType.STRING, disabled);
                 return false;
             }
-            pdc.set(toggle, PersistentDataType.STRING, "true");
+            pdc.set(functionToggle, PersistentDataType.STRING, enabled);
             return true;
         }
-        pdc.set(toggle, PersistentDataType.STRING, "false");
+        pdc.set(functionToggle, PersistentDataType.STRING, disabled);
         return false;
     }
     @Override

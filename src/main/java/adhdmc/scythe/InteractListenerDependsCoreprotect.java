@@ -1,5 +1,7 @@
 package adhdmc.scythe;
 
+import adhdmc.scythe.Commands.SubCommands.ToggleCommand;
+import com.destroystokyo.paper.MaterialSetTag;
 import com.destroystokyo.paper.MaterialTags;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
@@ -22,17 +24,21 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 
 import static org.bukkit.Bukkit.getServer;
 
 public class InteractListenerDependsCoreprotect implements Listener {
 
     CoreProtectAPI api = getCoreProtect();
+    private static final ArrayList<Material> configuredCrops = ConfigHandler.configuredCrops;
+    private static final NamespacedKey functionToggle = ToggleCommand.functionToggle;
+    private static final String usePermission = Scythe.usePermission;
+    private static final boolean requireHoe = ConfigHandler.requireHoe;
+    private static final boolean rightClickHarvest = ConfigHandler.rightClickHarvest;
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void rightClickFarmable(PlayerInteractEvent event) {
+    public void playerHarvestCoreProtect(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null) {
             return;
         }
@@ -40,7 +46,10 @@ public class InteractListenerDependsCoreprotect implements Listener {
             return;
         }
         Material clickedMaterial = event.getClickedBlock().getType();
-        if (!Tag.CROPS.isTagged(clickedMaterial) && clickedMaterial != Material.COCOA && clickedMaterial != Material.NETHER_WART) {
+        if (!configuredCrops.contains(clickedMaterial)) {
+            return;
+        }
+        if (rightClickHarvest && event.getAction().isLeftClick()){
             return;
         }
         Player player = event.getPlayer();
@@ -52,13 +61,13 @@ public class InteractListenerDependsCoreprotect implements Listener {
         if (clickedCrop.getMaximumAge() != clickedCrop.getAge()) {
             return;
         }
-        if (!player.hasPermission("scythe.use")){
+        if (!player.hasPermission(usePermission)){
             return;
         }
-        if (playerPDC.has(new NamespacedKey(Scythe.plugin, "toggle"), PersistentDataType.STRING) && playerPDC.get(new NamespacedKey(Scythe.plugin, "toggle"), PersistentDataType.STRING).equals("false")){
+        if (playerPDC.has(functionToggle, PersistentDataType.STRING) && playerPDC.get(functionToggle, PersistentDataType.STRING).equals(Scythe.replantingDisabled)){
             return;
         }
-        if (MessageHandler.requireHoe && !MaterialTags.HOES.isTagged(itemUsed)) {
+        if (requireHoe && !MaterialTags.HOES.isTagged(itemUsed)){
             return;
         }
         if (clickedMaterial.equals(Material.COCOA)){
@@ -67,34 +76,35 @@ public class InteractListenerDependsCoreprotect implements Listener {
             Cocoa cocoaData = (Cocoa) Bukkit.createBlockData(Material.COCOA);
             event.setCancelled(true);
             api.logRemoval(
-                player.getName(),
-                clickedSpot.getLocation(),
-                clickedSpot.getType(),
-                clickedCocoa);
+                    player.getName(),
+                    clickedSpot.getLocation(),
+                    clickedSpot.getType(),
+                    clickedCocoa);
             event.getClickedBlock().breakNaturally(itemUsed);
             cocoaData.setFacing(facing);
             clickedSpot.setBlockData(cocoaData);
             api.logPlacement(
+                    player.getName(),
+                    clickedSpot.getLocation(),
+                    clickedSpot.getType(),
+                    cocoaData);
+            return;
+        }
+        event.setCancelled(true);
+        api.logRemoval(
                 player.getName(),
                 clickedSpot.getLocation(),
                 clickedSpot.getType(),
-                cocoaData);
-            return;
-            }
-        event.setCancelled(true);
-        api.logRemoval(
-            player.getName(),
-            clickedSpot.getLocation(),
-            clickedSpot.getType(),
-             null);
+                null);
         event.getClickedBlock().breakNaturally(itemUsed);
         event.getClickedBlock().setType(clickedMaterial);
         api.logPlacement(
-            player.getName(),
-            clickedSpot.getLocation(),
-            clickedSpot.getType(),
-            null);
+                player.getName(),
+                clickedSpot.getLocation(),
+                clickedSpot.getType(),
+                null);
     }
+
     private CoreProtectAPI getCoreProtect() {
         Plugin plugin = getServer().getPluginManager().getPlugin("CoreProtect");
         // Check that CoreProtect is loaded

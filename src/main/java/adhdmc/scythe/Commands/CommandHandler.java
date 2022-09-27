@@ -1,11 +1,10 @@
 package adhdmc.scythe.Commands;
 
 import adhdmc.scythe.Commands.SubCommands.SubCommand;
-import adhdmc.scythe.MessageHandler;
+import adhdmc.scythe.ConfigHandler;
 import adhdmc.scythe.Scythe;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,7 +14,7 @@ import java.util.*;
 
 public class CommandHandler implements CommandExecutor, TabExecutor {
     public static HashMap<String, SubCommand> subcommandList = new HashMap<String, SubCommand>();
-    Map<MessageHandler.Message, String> msgs = MessageHandler.getMessageMap();
+    Map<ConfigHandler.Message, String> msgs = ConfigHandler.getMessageMap();
     MiniMessage mM = MiniMessage.miniMessage();
 
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
@@ -40,7 +39,7 @@ public class CommandHandler implements CommandExecutor, TabExecutor {
         if (subcommandList.containsKey(command)) {
             subcommandList.get(command).doThing(sender, Arrays.copyOfRange(args, 1, args.length));
         } else {
-            sender.sendMessage(mM.deserialize(msgs.get(MessageHandler.Message.UNKNOWN_COMMAND)));
+            sender.sendMessage(mM.deserialize(msgs.get(ConfigHandler.Message.UNKNOWN_COMMAND)));
         }
         return true;
     }

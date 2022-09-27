@@ -4,6 +4,7 @@ import adhdmc.scythe.Commands.CommandHandler;
 import adhdmc.scythe.Commands.SubCommands.HelpCommand;
 import adhdmc.scythe.Commands.SubCommands.ReloadCommand;
 import adhdmc.scythe.Commands.SubCommands.ToggleCommand;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -13,6 +14,9 @@ public final class Scythe extends JavaPlugin {
     public static final String usePermission = "scythe.use";
     public static final String togglePermission = "scythe.toggle";
     public static final String reloadPermission = "scythe.reload";
+    public static final String replantingEnabled = "replanting-enabled";
+    public static final String replantingDisabled = "replanting-disabled";
+    public static final String pluginLoggerPrefix = "[Scythe] ";
 
     @Override
 
@@ -34,7 +38,7 @@ public final class Scythe extends JavaPlugin {
         this.getCommand("scythe").setExecutor(new CommandHandler());
         this.saveDefaultConfig();
         configDefaults();
-        MessageHandler.configParser();
+        ConfigHandler.configParser();
         registerCommands();
     }
 
@@ -46,7 +50,8 @@ public final class Scythe extends JavaPlugin {
 
     private void configDefaults(){
         FileConfiguration config = this.getConfig();
-        config.addDefault("require-hoe", "false");
+        config.addDefault("require-hoe", false);
+        config.addDefault("allow-right-click-to-harvest", true);
         config.addDefault("prefix","<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset>");
         config.addDefault("toggle-on", "<green>Scythe toggled on!");
         config.addDefault("toggle-off", "<red>Scythe toggled off!");

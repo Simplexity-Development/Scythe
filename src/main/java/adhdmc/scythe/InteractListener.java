@@ -1,5 +1,7 @@
 package adhdmc.scythe;
 
+import adhdmc.scythe.Commands.SubCommands.ToggleCommand;
+import com.destroystokyo.paper.MaterialSetTag;
 import com.destroystokyo.paper.MaterialTags;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -18,14 +20,20 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.Plugin;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 
 public class InteractListener implements Listener {
 
+    private static final ArrayList<Material> configuredCrops = ConfigHandler.configuredCrops;
+    private static final NamespacedKey functionToggle = ToggleCommand.functionToggle;
+    private static final String usePermission = Scythe.usePermission;
+    private static final boolean requireHoe = ConfigHandler.requireHoe;
+    private static final boolean rightClickHarvest = ConfigHandler.rightClickHarvest;
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void rightClickFarmable(PlayerInteractEvent event) {
+    public void playerHarvest(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null) {
             return;
         }
@@ -33,7 +41,10 @@ public class InteractListener implements Listener {
             return;
         }
         Material clickedMaterial = event.getClickedBlock().getType();
-        if (!Tag.CROPS.isTagged(clickedMaterial) && clickedMaterial != Material.COCOA && clickedMaterial != Material.NETHER_WART) {
+        if (!configuredCrops.contains(clickedMaterial)) {
+            return;
+        }
+        if (rightClickHarvest && event.getAction().isLeftClick()){
             return;
         }
         Player player = event.getPlayer();
@@ -45,13 +56,13 @@ public class InteractListener implements Listener {
         if (clickedCrop.getMaximumAge() != clickedCrop.getAge()) {
             return;
         }
-        if (!player.hasPermission("scythe.use")){
+        if (!player.hasPermission(usePermission)){
             return;
         }
-        if (playerPDC.has(new NamespacedKey(Scythe.plugin, "toggle"), PersistentDataType.STRING) && playerPDC.get(new NamespacedKey(Scythe.plugin, "toggle"), PersistentDataType.STRING).equals("false")){
+        if (playerPDC.has(functionToggle, PersistentDataType.STRING) && playerPDC.get(functionToggle, PersistentDataType.STRING).equals(Scythe.replantingDisabled)){
             return;
         }
-        if (MessageHandler.requireHoe && !MaterialTags.HOES.isTagged(itemUsed)){
+        if (requireHoe && !MaterialTags.HOES.isTagged(itemUsed)){
             return;
         }
         if (clickedMaterial.equals(Material.COCOA)){
