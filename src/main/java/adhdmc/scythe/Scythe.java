@@ -1,27 +1,32 @@
 package adhdmc.scythe;
 
-import adhdmc.scythe.Commands.CommandHandler;
-import adhdmc.scythe.Commands.SubCommands.HelpCommand;
-import adhdmc.scythe.Commands.SubCommands.ReloadCommand;
-import adhdmc.scythe.Commands.SubCommands.ToggleCommand;
-import org.bukkit.NamespacedKey;
+import adhdmc.scythe.commands.CommandHandler;
+import adhdmc.scythe.commands.subcommands.HelpCommand;
+import adhdmc.scythe.commands.subcommands.ReloadCommand;
+import adhdmc.scythe.commands.subcommands.ToggleCommand;
+import adhdmc.scythe.config.ConfigHandler;
+import adhdmc.scythe.config.Defaults;
+import adhdmc.scythe.listeners.InteractListener;
+import adhdmc.scythe.listeners.InteractListenerDependsCoreprotect;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.logging.Logger;
+
 public final class Scythe extends JavaPlugin {
-    public static Scythe plugin;
-    public static final double version = 1.0;
-    public static final String usePermission = "scythe.use";
-    public static final String togglePermission = "scythe.toggle";
-    public static final String reloadPermission = "scythe.reload";
-    public static final String replantingEnabled = "replanting-enabled";
-    public static final String replantingDisabled = "replanting-disabled";
-    public static final String pluginLoggerPrefix = "[Scythe] ";
+    private static Scythe instance;
+    private static Logger logger;
+    private static FileConfiguration config;
+    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     @Override
 
     public void onEnable() {
-        plugin = this;
+        instance = this;
+        logger = this.getLogger();
+        config = this.getConfig();
         try {
             Class.forName("net.kyori.adventure.text.minimessage.MiniMessage");
             Class.forName("net.kyori.adventure.text.Component");
@@ -30,16 +35,33 @@ public final class Scythe extends JavaPlugin {
             this.getLogger().severe("[Scythe] This plugin depends on classes not found on your server software. This plugin depends on PaperMC, versions after 1.18.2. Disabling plugin");
             this.getServer().getPluginManager().disablePlugin(this);
         }
-        if (plugin.getServer().getPluginManager().isPluginEnabled("CoreProtect")){
+        if (instance.getServer().getPluginManager().isPluginEnabled("CoreProtect")){
             getServer().getPluginManager().registerEvents(new InteractListenerDependsCoreprotect(), this);
         } else {
             getServer().getPluginManager().registerEvents(new InteractListener(), this);
         }
         this.getCommand("scythe").setExecutor(new CommandHandler());
         this.saveDefaultConfig();
-        configDefaults();
+        Defaults.configDefaults();
+        Defaults.setPerms();
         ConfigHandler.configParser();
         registerCommands();
+    }
+
+    public static Plugin getInstance(){
+        return instance;
+    }
+
+    public static Logger getScytheLogger(){
+        return logger;
+    }
+
+    public static FileConfiguration getScytheConfig(){
+        return config;
+    }
+
+    public static MiniMessage getMiniMessage(){
+        return miniMessage;
     }
 
     private void registerCommands() {
@@ -48,20 +70,6 @@ public final class Scythe extends JavaPlugin {
         CommandHandler.subcommandList.put("help", new HelpCommand());
     }
 
-    private void configDefaults(){
-        FileConfiguration config = this.getConfig();
-        config.addDefault("require-hoe", false);
-        config.addDefault("allow-right-click-to-harvest", true);
-        config.addDefault("prefix","<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset>");
-        config.addDefault("toggle-on", "<green>Scythe toggled on!");
-        config.addDefault("toggle-off", "<red>Scythe toggled off!");
-        config.addDefault("unknown-command", "<red>Unknown Command");
-        config.addDefault("config-reload", "<gold>Scythe Config Reloaded!");
-        config.addDefault("no-permission", "<red>You do not have the required permissions to run this command");
-        config.addDefault("not-a-player", "Sorry! This command can only be run by a player");
-        config.addDefault("help-main", "<grey>Scythe allows players to harvest grown crops without needing to replant");
-        config.addDefault("help-toggle", "<yellow>/scythe toggle \n<grey>• Toggle scythe on or off");
-        config.addDefault("help-reload", "<yellow>/scythe reload \n<grey>• Reloads config settings");
-    }
+
 }
 

@@ -1,12 +1,13 @@
-package adhdmc.scythe;
+package adhdmc.scythe.listeners;
 
-import adhdmc.scythe.Commands.SubCommands.ToggleCommand;
-import com.destroystokyo.paper.MaterialSetTag;
+import adhdmc.scythe.Scythe;
+import adhdmc.scythe.commands.subcommands.ToggleCommand;
+import adhdmc.scythe.config.ConfigHandler;
+import adhdmc.scythe.config.Defaults;
 import com.destroystokyo.paper.MaterialTags;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
@@ -20,17 +21,17 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class InteractListener implements Listener {
 
-    private static final ArrayList<Material> configuredCrops = ConfigHandler.configuredCrops;
-    private static final NamespacedKey functionToggle = ToggleCommand.functionToggle;
-    private static final String usePermission = Scythe.usePermission;
-    private static final boolean requireHoe = ConfigHandler.requireHoe;
-    private static final boolean rightClickHarvest = ConfigHandler.rightClickHarvest;
+    private final List<Material> configuredCrops = ConfigHandler.getConfiguredCrops();
+    private final NamespacedKey functionToggle = ToggleCommand.functionToggle;
+    private static final String usePermission = Defaults.getPermMap().get(Defaults.permissions.USE);
+    private final boolean requireHoe = ConfigHandler.isRequireHoe();
+    private final boolean rightClickHarvest = ConfigHandler.isRightClickHarvest();
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void playerHarvest(PlayerInteractEvent event) {
@@ -44,7 +45,7 @@ public class InteractListener implements Listener {
         if (!configuredCrops.contains(clickedMaterial)) {
             return;
         }
-        if (rightClickHarvest && event.getAction().isLeftClick()){
+        if (!rightClickHarvest && event.getAction().isRightClick()){
             return;
         }
         Player player = event.getPlayer();
@@ -59,7 +60,8 @@ public class InteractListener implements Listener {
         if (!player.hasPermission(usePermission)){
             return;
         }
-        if (playerPDC.has(functionToggle, PersistentDataType.STRING) && playerPDC.get(functionToggle, PersistentDataType.STRING).equals(Scythe.replantingDisabled)){
+        Byte playerPDCValue = playerPDC.get(functionToggle, PersistentDataType.BYTE);
+        if (playerPDCValue != null && playerPDCValue.equals((byte)0)){
             return;
         }
         if (requireHoe && !MaterialTags.HOES.isTagged(itemUsed)){

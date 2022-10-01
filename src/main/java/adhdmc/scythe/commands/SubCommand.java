@@ -1,4 +1,4 @@
-package adhdmc.scythe.Commands.SubCommands;
+package adhdmc.scythe.commands;
 
 import org.bukkit.command.CommandSender;
 

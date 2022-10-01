@@ -1,6 +1,8 @@
-package adhdmc.scythe;
+package adhdmc.scythe.config;
 
+import adhdmc.scythe.Scythe;
 import com.destroystokyo.paper.MaterialSetTag;
+import it.unimi.dsi.fastutil.objects.ObjectLists;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -13,25 +15,23 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class ConfigHandler {
-    private static final Logger logger = Scythe.plugin.getLogger();
-    private static final String logPrefix = Scythe.pluginLoggerPrefix;
-    public static FileConfiguration config = Scythe.plugin.getConfig();
-    private static final NamespacedKey cropMaterials = new NamespacedKey(Scythe.plugin, "crops");
-    public static boolean requireHoe;
-    public static boolean rightClickHarvest;
+    private static final Logger logger = Scythe.getScytheLogger();
+    private static final FileConfiguration config = Scythe.getScytheConfig();
+    private static boolean requireHoe;
+    private static boolean rightClickHarvest;
     private static final HashMap<Message, String> messageMap = new HashMap<>();
     public enum Message {
-        PREFIX, TOGGLE_ON, TOGGLE_OFF, UNKNOWN_COMMAND, CONFIG_RELOAD, NO_PERMISSION,
+        CONSOLE_PREFIX, PREFIX, TOGGLE_ON, TOGGLE_OFF, UNKNOWN_COMMAND, CONFIG_RELOAD, NO_PERMISSION,
         NOT_A_PLAYER, HELP_MAIN, HELP_TOGGLE, HELP_RELOAD
     }
-    public static final ArrayList<Material> configuredCrops = new ArrayList<Material>();
+    private static final ArrayList<Material> configuredCrops = new ArrayList<>();
     public static void configParser(){
         setMessageMap();
         setConfiguredCrops();
         requireHoe = false;
         rightClickHarvest = true;
-        requireHoe = config.getBoolean("require-hoe", false);
-        rightClickHarvest = config.getBoolean("right-click-to-harvest", false);
+        requireHoe = config.getBoolean("require-hoe");
+        rightClickHarvest = config.getBoolean("right-click-to-harvest");
     }
 
     private static void setConfiguredCrops(){
@@ -39,7 +39,7 @@ public class ConfigHandler {
         List<String> cropList = config.getStringList("crops");
         for (String configCrop : cropList){
             if(Material.matchMaterial(configCrop) == null){
-                logger.warning( logPrefix + configCrop + " is not a valid material. Please check to be sure you spelled everything correctly.");
+                logger.warning( messageMap.get(Message.CONSOLE_PREFIX) + configCrop + " is not a valid material. Please check to be sure you spelled everything correctly.");
                 continue;
             }
             Material crop = Material.matchMaterial(configCrop);
@@ -49,14 +49,14 @@ public class ConfigHandler {
                 continue;
             }
             if(!crop.isBlock()){
-                logger.warning(logPrefix + configCrop + " is not a valid block material. Please check to be sure you spelled everything correctly.");
+                logger.warning(messageMap.get(Message.CONSOLE_PREFIX) + configCrop + " is not a valid block material. Please check to be sure you spelled everything correctly.");
                 continue;
             }
             BlockData cropBlock = Bukkit.createBlockData(crop);
             try{
                 Ageable ageableCrop = (Ageable) cropBlock;
             } catch (ClassCastException exception){
-                logger.warning(logPrefix + configCrop + " is not a valid crop material. Please check to be sure you spelled everything correctly.");
+                logger.warning(messageMap.get(Message.CONSOLE_PREFIX) + configCrop + " is not a valid crop material. Please check to be sure you spelled everything correctly.");
                 continue;
             }
             configuredCrops.add(crop);
@@ -65,6 +65,7 @@ public class ConfigHandler {
 
     private static void setMessageMap(){
         messageMap.clear();
+        messageMap.put(Message.CONSOLE_PREFIX, "[Scythe] ");
         messageMap.put(Message.PREFIX,
                 config.getString("prefix","<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset>"));
         messageMap.put(Message.TOGGLE_ON,
@@ -89,5 +90,13 @@ public class ConfigHandler {
     public static Map<Message, String> getMessageMap() {
         return Collections.unmodifiableMap(messageMap);
     }
-
+    public static boolean isRequireHoe(){
+        return requireHoe;
+    }
+    public static boolean isRightClickHarvest() {
+        return rightClickHarvest;
+    }
+    public static List<Material> getConfiguredCrops() {
+        return Collections.unmodifiableList(configuredCrops);
+    }
 }

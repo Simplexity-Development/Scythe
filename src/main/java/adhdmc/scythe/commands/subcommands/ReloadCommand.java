@@ -1,7 +1,9 @@
-package adhdmc.scythe.Commands.SubCommands;
+package adhdmc.scythe.commands.subcommands;
 
-import adhdmc.scythe.ConfigHandler;
+import adhdmc.scythe.commands.SubCommand;
+import adhdmc.scythe.config.ConfigHandler;
 import adhdmc.scythe.Scythe;
+import adhdmc.scythe.config.Defaults;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,7 +13,7 @@ import java.util.Map;
 
 public class ReloadCommand extends SubCommand {
     Map<ConfigHandler.Message, String> msgs = ConfigHandler.getMessageMap();
-    MiniMessage mM = MiniMessage.miniMessage();
+    MiniMessage miniMessage = Scythe.getMiniMessage();
 
     public ReloadCommand(){
         super("reload", "Reloads the Scythe Plugin", "/scythe reload");
@@ -19,13 +21,13 @@ public class ReloadCommand extends SubCommand {
 
     @Override
     public void doThing(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)|| sender.hasPermission(Scythe.reloadPermission)) {
+        if (!(sender instanceof Player)|| sender.hasPermission(Defaults.getPermMap().get(Defaults.permissions.RELOAD_COMMAND))) {
             ConfigHandler.configParser();
-            Scythe.plugin.reloadConfig();
-            sender.sendMessage(mM.deserialize(msgs.get(ConfigHandler.Message.CONFIG_RELOAD)));
+            Scythe.getInstance().reloadConfig();
+            sender.sendMessage(miniMessage.deserialize(msgs.get(ConfigHandler.Message.CONFIG_RELOAD)));
             return;
         }
-        sender.sendMessage(mM.deserialize(msgs.get(ConfigHandler.Message.NO_PERMISSION)));
+        sender.sendMessage(miniMessage.deserialize(msgs.get(ConfigHandler.Message.NO_PERMISSION)));
     }
 
     @Override
