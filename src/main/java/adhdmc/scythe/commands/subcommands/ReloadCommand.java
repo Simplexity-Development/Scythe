@@ -21,7 +21,7 @@ public class ReloadCommand extends SubCommand {
 
     @Override
     public void doThing(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)|| sender.hasPermission(Defaults.getPermMap().get(Defaults.permissions.RELOAD_COMMAND))) {
+        if (!(sender instanceof Player)|| sender.hasPermission(ConfigHandler.getPermMap().get(ConfigHandler.Permission.RELOAD_COMMAND))) {
             ConfigHandler.configParser();
             Scythe.getInstance().reloadConfig();
             sender.sendMessage(miniMessage.deserialize(msgs.get(ConfigHandler.Message.CONFIG_RELOAD)));

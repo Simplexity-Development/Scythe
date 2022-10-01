@@ -27,8 +27,8 @@ public class ToggleCommand extends SubCommand {
             sender.sendMessage(miniMessage.deserialize(msgs.get(ConfigHandler.Message.NOT_A_PLAYER)));
             return;
         }
-        if (!(sender.hasPermission(Defaults.getPermMap().get(Defaults.permissions.TOGGLE_COMMAND))
-                && sender.hasPermission(Defaults.getPermMap().get(Defaults.permissions.USE)))) {
+        if (!(sender.hasPermission(ConfigHandler.getPermMap().get(ConfigHandler.Permission.TOGGLE_COMMAND))
+                && sender.hasPermission(ConfigHandler.getPermMap().get(ConfigHandler.Permission.USE)))) {
             sender.sendMessage(miniMessage.deserialize(msgs.get(ConfigHandler.Message.PREFIX) + msgs.get(ConfigHandler.Message.NO_PERMISSION)));
             return;
         }

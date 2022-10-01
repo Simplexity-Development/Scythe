@@ -27,12 +27,6 @@ import java.util.List;
 
 public class InteractListener implements Listener {
 
-    private final List<Material> configuredCrops = ConfigHandler.getConfiguredCrops();
-    private final NamespacedKey functionToggle = ToggleCommand.functionToggle;
-    private static final String usePermission = Defaults.getPermMap().get(Defaults.permissions.USE);
-    private final boolean requireHoe = ConfigHandler.isRequireHoe();
-    private final boolean rightClickHarvest = ConfigHandler.isRightClickHarvest();
-
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void playerHarvest(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null) {
@@ -42,10 +36,10 @@ public class InteractListener implements Listener {
             return;
         }
         Material clickedMaterial = event.getClickedBlock().getType();
-        if (!configuredCrops.contains(clickedMaterial)) {
+        if (!ConfigHandler.getConfiguredCrops().contains(clickedMaterial)) {
             return;
         }
-        if (!rightClickHarvest && event.getAction().isRightClick()){
+        if (!ConfigHandler.isRightClickHarvest() && event.getAction().isRightClick()){
             return;
         }
         Player player = event.getPlayer();
@@ -57,14 +51,14 @@ public class InteractListener implements Listener {
         if (clickedCrop.getMaximumAge() != clickedCrop.getAge()) {
             return;
         }
-        if (!player.hasPermission(usePermission)){
+        if (!player.hasPermission(ConfigHandler.getPermMap().get(ConfigHandler.Permission.USE))){
             return;
         }
-        Byte playerPDCValue = playerPDC.get(functionToggle, PersistentDataType.BYTE);
+        Byte playerPDCValue = playerPDC.get(ToggleCommand.functionToggle, PersistentDataType.BYTE);
         if (playerPDCValue != null && playerPDCValue.equals((byte)0)){
             return;
         }
-        if (requireHoe && !MaterialTags.HOES.isTagged(itemUsed)){
+        if (ConfigHandler.isRequireHoe() && !MaterialTags.HOES.isTagged(itemUsed.getType())){
             return;
         }
         if (clickedMaterial.equals(Material.COCOA)){

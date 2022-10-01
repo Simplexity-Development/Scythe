@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Defaults {
-    private static final HashMap<permissions, String> permMap = new HashMap<>();
     private static final Plugin instance = Scythe.getInstance();
     public static void configDefaults(){
         FileConfiguration config = instance.getConfig();
@@ -27,19 +26,6 @@ public class Defaults {
         config.addDefault("help-reload", "<yellow>/scythe reload \n<grey>• Reloads config settings");
     }
 
-    public enum permissions{
-        USE, TOGGLE_COMMAND, RELOAD_COMMAND
-    }
 
-    public static void setPerms(){
-        permMap.clear();
-        permMap.put(permissions.USE, "scythe.use");
-        permMap.put(permissions.TOGGLE_COMMAND, "scythe.toggle");
-        permMap.put(permissions.RELOAD_COMMAND, "scythe.reload");
-    }
-
-    public static Map<permissions, String> getPermMap(){
-        return Collections.unmodifiableMap(permMap);
-    }
 
 }

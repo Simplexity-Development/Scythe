@@ -43,7 +43,7 @@ public final class Scythe extends JavaPlugin {
         this.getCommand("scythe").setExecutor(new CommandHandler());
         this.saveDefaultConfig();
         Defaults.configDefaults();
-        Defaults.setPerms();
+        ConfigHandler.setPerms();
         ConfigHandler.configParser();
         registerCommands();
     }

@@ -19,7 +19,7 @@ public class HelpCommand extends SubCommand {
 
     @Override
     public void doThing(CommandSender sender, String[] args) {
-        if(sender.hasPermission(Defaults.getPermMap().get(Defaults.permissions.USE))) {
+        if(sender.hasPermission(ConfigHandler.getPermMap().get(ConfigHandler.Permission.USE))) {
             sender.sendMessage(miniMessage.deserialize(msgs.get(
                     ConfigHandler.Message.PREFIX) + "\n" + msgs.get(ConfigHandler.Message.HELP_MAIN) +
                     "\n" + msgs.get(ConfigHandler.Message.HELP_RELOAD) +

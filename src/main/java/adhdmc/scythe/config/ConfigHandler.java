@@ -63,6 +63,23 @@ public class ConfigHandler {
             }
         }
 
+    private static final HashMap<Permission, String> permMap = new HashMap<>();
+
+    public enum Permission{
+        USE, TOGGLE_COMMAND, RELOAD_COMMAND
+    }
+
+    public static void setPerms(){
+        permMap.clear();
+        permMap.put(Permission.USE, "scythe.use");
+        permMap.put(Permission.TOGGLE_COMMAND, "scythe.toggle");
+        permMap.put(Permission.RELOAD_COMMAND, "scythe.reload");
+    }
+
+    public static Map<Permission, String> getPermMap(){
+        return Collections.unmodifiableMap(permMap);
+    }
+
     private static void setMessageMap(){
         messageMap.clear();
         messageMap.put(Message.CONSOLE_PREFIX, "[Scythe] ");
@@ -77,7 +94,7 @@ public class ConfigHandler {
         messageMap.put(Message.CONFIG_RELOAD,
                 config.getString("config-reload", "<gold>Scythe Config Reloaded!"));
         messageMap.put(Message.NO_PERMISSION,
-                config.getString("no-permission", "<red>You do not have the required permissions to run this command"));
+                config.getString("no-permission", "<red>You do not have the required Permission to run this command"));
         messageMap.put(Message.NOT_A_PLAYER,
                 config.getString("not-a-player", "Sorry! This command can only be run by a player"));
         messageMap.put(Message.HELP_MAIN,
