@@ -9,6 +9,7 @@ import adhdmc.scythe.config.Defaults;
 import adhdmc.scythe.listeners.InteractListener;
 import adhdmc.scythe.listeners.InteractListenerDependsCoreprotect;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,6 +28,7 @@ public final class Scythe extends JavaPlugin {
         instance = this;
         logger = this.getLogger();
         config = this.getConfig();
+        Metrics metrics = new Metrics(this, 16540);
         try {
             Class.forName("net.kyori.adventure.text.minimessage.MiniMessage");
             Class.forName("net.kyori.adventure.text.Component");

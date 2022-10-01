@@ -1,6 +1,6 @@
 #Scythe
 require-hoe: false
-allow-right-click-to-harvest: true
+right-click-to-harvest: true
 #crops the plugin should work on
 crops:
   - BEETROOTS

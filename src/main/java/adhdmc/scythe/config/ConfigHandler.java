@@ -10,13 +10,14 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.Plugin;
 
 import java.util.*;
 import java.util.logging.Logger;
 
 public class ConfigHandler {
     private static final Logger logger = Scythe.getScytheLogger();
-    private static final FileConfiguration config = Scythe.getScytheConfig();
+    private static final Plugin instance = Scythe.getInstance();
     private static boolean requireHoe;
     private static boolean rightClickHarvest;
     private static final HashMap<Message, String> messageMap = new HashMap<>();
@@ -30,13 +31,13 @@ public class ConfigHandler {
         setConfiguredCrops();
         requireHoe = false;
         rightClickHarvest = true;
-        requireHoe = config.getBoolean("require-hoe");
-        rightClickHarvest = config.getBoolean("right-click-to-harvest");
+        requireHoe = instance.getConfig().getBoolean("require-hoe");
+        rightClickHarvest = instance.getConfig().getBoolean("right-click-to-harvest");
     }
 
     private static void setConfiguredCrops(){
         configuredCrops.clear();
-        List<String> cropList = config.getStringList("crops");
+        List<String> cropList = instance.getConfig().getStringList("crops");
         for (String configCrop : cropList){
             if(Material.matchMaterial(configCrop) == null){
                 logger.warning( messageMap.get(Message.CONSOLE_PREFIX) + configCrop + " is not a valid material. Please check to be sure you spelled everything correctly.");
@@ -84,25 +85,25 @@ public class ConfigHandler {
         messageMap.clear();
         messageMap.put(Message.CONSOLE_PREFIX, "[Scythe] ");
         messageMap.put(Message.PREFIX,
-                config.getString("prefix","<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset>"));
+                instance.getConfig().getString("prefix","<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset>"));
         messageMap.put(Message.TOGGLE_ON,
-                config.getString("toggle-on", "<green>Scythe toggled on!"));
+                instance.getConfig().getString("toggle-on", "<green>Scythe toggled on!"));
         messageMap.put(Message.TOGGLE_OFF,
-                config.getString("toggle-off", "<red>Scythe toggled off!"));
+                instance.getConfig().getString("toggle-off", "<red>Scythe toggled off!"));
         messageMap.put(Message.UNKNOWN_COMMAND,
-                config.getString("unknown-command", "<red>Unknown Command"));
+                instance.getConfig().getString("unknown-command", "<red>Unknown Command"));
         messageMap.put(Message.CONFIG_RELOAD,
-                config.getString("config-reload", "<gold>Scythe Config Reloaded!"));
+                instance.getConfig().getString("config-reload", "<gold>Scythe Config Reloaded!"));
         messageMap.put(Message.NO_PERMISSION,
-                config.getString("no-permission", "<red>You do not have the required Permission to run this command"));
+                instance.getConfig().getString("no-permission", "<red>You do not have the required Permission to run this command"));
         messageMap.put(Message.NOT_A_PLAYER,
-                config.getString("not-a-player", "Sorry! This command can only be run by a player"));
+                instance.getConfig().getString("not-a-player", "Sorry! This command can only be run by a player"));
         messageMap.put(Message.HELP_MAIN,
-                config.getString("help-main", "<grey>Scythe allows players to harvest grown crops without needing to replant"));
+                instance.getConfig().getString("help-main", "<grey>Scythe allows players to harvest grown crops without needing to replant"));
         messageMap.put(Message.HELP_TOGGLE,
-                config.getString("help-toggle", "<yellow>/scythe toggle \n<grey>• Toggle scythe on or off"));
+                instance.getConfig().getString("help-toggle", "<yellow>/scythe toggle \n<grey>• Toggle scythe on or off"));
         messageMap.put(Message.HELP_RELOAD,
-                config.getString("help-reload", "<yellow>/scythe reload \n<grey>• Reloads config settings"));
+                instance.getConfig().getString("help-reload", "<yellow>/scythe reload \n<grey>• Reloads config settings"));
     }
     public static Map<Message, String> getMessageMap() {
         return Collections.unmodifiableMap(messageMap);
