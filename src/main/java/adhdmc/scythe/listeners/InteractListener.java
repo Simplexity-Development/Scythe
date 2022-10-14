@@ -1,13 +1,11 @@
 package adhdmc.scythe.listeners;
 
-import adhdmc.scythe.Scythe;
 import adhdmc.scythe.commands.subcommands.ToggleCommand;
 import adhdmc.scythe.config.ConfigHandler;
-import adhdmc.scythe.config.Defaults;
+import adhdmc.scythe.config.ScythePermission;
 import com.destroystokyo.paper.MaterialTags;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
@@ -21,9 +19,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class InteractListener implements Listener {
 
@@ -51,7 +46,7 @@ public class InteractListener implements Listener {
         if (clickedCrop.getMaximumAge() != clickedCrop.getAge()) {
             return;
         }
-        if (!player.hasPermission(ConfigHandler.getPermMap().get(ConfigHandler.Permission.USE))){
+        if (!player.hasPermission(ScythePermission.USE.getPermission())){
             return;
         }
         Byte playerPDCValue = playerPDC.get(ToggleCommand.functionToggle, PersistentDataType.BYTE);

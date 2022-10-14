@@ -4,6 +4,8 @@ import adhdmc.scythe.commands.SubCommand;
 import adhdmc.scythe.config.ConfigHandler;
 import adhdmc.scythe.Scythe;
 import adhdmc.scythe.config.Defaults;
+import adhdmc.scythe.config.Message;
+import adhdmc.scythe.config.ScythePermission;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
@@ -15,28 +17,27 @@ import java.util.List;
 import java.util.Map;
 
 public class ToggleCommand extends SubCommand {
-    Map<ConfigHandler.Message, String> msgs = ConfigHandler.getMessageMap();
     private static final MiniMessage miniMessage = Scythe.getMiniMessage();
     public static final NamespacedKey functionToggle = new NamespacedKey(Scythe.getInstance(), "functiontoggle");
 
     public ToggleCommand() {
         super("toggle", "Toggles scythe on and off","/scythe toggle");
     }
-    public void doThing(CommandSender sender, String[] args) {
+    public void execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(miniMessage.deserialize(msgs.get(ConfigHandler.Message.NOT_A_PLAYER)));
+            sender.sendMessage(miniMessage.deserialize(Message.NOT_A_PLAYER.getMessage()));
             return;
         }
-        if (!(sender.hasPermission(ConfigHandler.getPermMap().get(ConfigHandler.Permission.TOGGLE_COMMAND))
-                && sender.hasPermission(ConfigHandler.getPermMap().get(ConfigHandler.Permission.USE)))) {
-            sender.sendMessage(miniMessage.deserialize(msgs.get(ConfigHandler.Message.PREFIX) + msgs.get(ConfigHandler.Message.NO_PERMISSION)));
+        if (!(sender.hasPermission(ScythePermission.TOGGLE_COMMAND.getPermission()))
+                && sender.hasPermission(ScythePermission.USE.getPermission())) {
+            sender.sendMessage(miniMessage.deserialize(Message.PREFIX.getMessage()) + Message.NO_PERMISSION.getMessage());
             return;
         }
         if (toggleSetting((Player) sender)) {
-            sender.sendMessage(miniMessage.deserialize(msgs.get(ConfigHandler.Message.PREFIX) + msgs.get(ConfigHandler.Message.TOGGLE_ON)));
+            sender.sendMessage(miniMessage.deserialize(Message.PREFIX.getMessage()) + Message.TOGGLE_ON.getMessage());
             return;
         }
-        sender.sendMessage(miniMessage.deserialize(msgs.get(ConfigHandler.Message.PREFIX) + msgs.get(ConfigHandler.Message.TOGGLE_OFF)));
+        sender.sendMessage(miniMessage.deserialize(Message.PREFIX.getMessage()) + Message.TOGGLE_OFF.getMessage());
     }
 
     private boolean toggleSetting(Player player) {

@@ -5,9 +5,9 @@ import org.bukkit.command.CommandSender;
 import java.util.List;
 
 public abstract class SubCommand {
-    private String name;
-    private String description;
-    private String syntax;
+    private final String name;
+    private final String description;
+    private final String syntax;
 
     public SubCommand(String name, String description, String syntax){
         this.name = name;
@@ -27,7 +27,7 @@ public abstract class SubCommand {
         return syntax;
     }
 
-    public abstract void doThing(CommandSender sender, String[] args);
+    public abstract void execute  (CommandSender sender, String[] args);
 
     public abstract List<String> getSubcommandArguments(CommandSender sender, String[] args);
 }

@@ -9,6 +9,8 @@ crops:
   - NETHER_WART
   - POTATOES
   - WHEAT
+
+
 #Lang Options
 prefix: "<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset> "
 toggle-on: "<green>Scythe toggled on!"

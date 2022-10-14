@@ -6,20 +6,20 @@ import adhdmc.scythe.commands.subcommands.ReloadCommand;
 import adhdmc.scythe.commands.subcommands.ToggleCommand;
 import adhdmc.scythe.config.ConfigHandler;
 import adhdmc.scythe.config.Defaults;
+import adhdmc.scythe.config.ScythePermission;
 import adhdmc.scythe.listeners.InteractListener;
 import adhdmc.scythe.listeners.InteractListenerDependsCoreprotect;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 
 public final class Scythe extends JavaPlugin {
     private static Scythe instance;
     private static Logger logger;
-    private static FileConfiguration config;
     private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     @Override
@@ -27,7 +27,6 @@ public final class Scythe extends JavaPlugin {
     public void onEnable() {
         instance = this;
         logger = this.getLogger();
-        config = this.getConfig();
         Metrics metrics = new Metrics(this, 16540);
         try {
             Class.forName("net.kyori.adventure.text.minimessage.MiniMessage");
@@ -42,10 +41,10 @@ public final class Scythe extends JavaPlugin {
         } else {
             getServer().getPluginManager().registerEvents(new InteractListener(), this);
         }
-        this.getCommand("scythe").setExecutor(new CommandHandler());
+        Objects.requireNonNull(this.getCommand("scythe")).setExecutor(new CommandHandler());
         this.saveDefaultConfig();
         Defaults.configDefaults();
-        ConfigHandler.setPerms();
+        ScythePermission.registerPermissions();
         ConfigHandler.configParser();
         registerCommands();
     }
@@ -56,10 +55,6 @@ public final class Scythe extends JavaPlugin {
 
     public static Logger getScytheLogger(){
         return logger;
-    }
-
-    public static FileConfiguration getScytheConfig(){
-        return config;
     }
 
     public static MiniMessage getMiniMessage(){
