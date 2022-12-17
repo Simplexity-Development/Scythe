@@ -17,15 +17,22 @@ public class ConfigHandler {
     private static final Plugin instance = Scythe.getInstance();
     private static boolean requireHoe;
     private static boolean rightClickHarvest;
+    private static boolean playSounds;
+    private static boolean breakParticles;
     private static final ArrayList<Material> configuredCrops = new ArrayList<>();
     public static void configParser(){
         Message.reloadMessages();
         setConfiguredCrops();
         requireHoe = false;
         rightClickHarvest = true;
+        playSounds = true;
+        breakParticles = true;
         requireHoe = instance.getConfig().getBoolean("require-hoe");
         rightClickHarvest = instance.getConfig().getBoolean("right-click-to-harvest");
+        playSounds = instance.getConfig().getBoolean("play-sounds");
+        breakParticles = instance.getConfig().getBoolean("break-particles");
     }
+
 
     private static void setConfiguredCrops(){
         configuredCrops.clear();
@@ -59,9 +66,18 @@ public class ConfigHandler {
     public static boolean isRequireHoe(){
         return requireHoe;
     }
-    public static boolean isRightClickHarvest() {
+    public static boolean allowRightClickHarvest() {
         return rightClickHarvest;
     }
+
+    public static boolean showBreakParticles() {
+        return breakParticles;
+    }
+
+    public static boolean shouldPlaySounds() {
+        return playSounds;
+    }
+
     public static List<Material> getConfiguredCrops() {
         return Collections.unmodifiableList(configuredCrops);
     }

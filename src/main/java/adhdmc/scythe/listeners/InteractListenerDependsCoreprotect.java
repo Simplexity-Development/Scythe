@@ -6,8 +6,7 @@ import adhdmc.scythe.config.ScythePermission;
 import com.destroystokyo.paper.MaterialTags;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
@@ -41,39 +40,50 @@ public class InteractListenerDependsCoreprotect implements Listener {
         if (!ConfigHandler.getConfiguredCrops().contains(clickedMaterial)) {
             return;
         }
-        if (!ConfigHandler.isRightClickHarvest() && event.getAction().isRightClick()){
+        boolean isRightClick = event.getAction().isRightClick();
+        if (!ConfigHandler.allowRightClickHarvest() && isRightClick){
             return;
         }
         Player player = event.getPlayer();
         Block clickedSpot = event.getClickedBlock();
+        Location clickedLocation = clickedSpot.getLocation().toCenterLocation();
         Ageable clickedCrop = (Ageable) clickedSpot.getBlockData();
         ItemStack itemUsed = player.getInventory().getItemInMainHand();
         BlockFace facing;
         PersistentDataContainer playerPDC = player.getPersistentDataContainer();
-        if (clickedCrop.getMaximumAge() != clickedCrop.getAge()) {
-            return;
-        }
         if (!player.hasPermission(ScythePermission.USE.getPermission())){
             return;
         }
         Byte playerPDCValue = playerPDC.get(ToggleCommand.functionToggle, PersistentDataType.BYTE);
-        if (playerPDCValue != null && playerPDCValue.equals((byte)0)){
+        if (playerPDCValue != null && playerPDCValue.equals((byte)0) && player.hasPermission(ScythePermission.TOGGLE_COMMAND.getPermission())){
             return;
         }
         if (ConfigHandler.isRequireHoe() && !MaterialTags.HOES.isTagged(itemUsed.getType())){
+            return;
+        }
+        if (clickedCrop.getMaximumAge() != clickedCrop.getAge()) {
+            event.setCancelled(true);
             return;
         }
         if (clickedMaterial.equals(Material.COCOA)){
             Cocoa clickedCocoa = (Cocoa) event.getClickedBlock().getBlockData();
             facing = clickedCocoa.getFacing();
             Cocoa cocoaData = (Cocoa) Bukkit.createBlockData(Material.COCOA);
+            if (isRightClick) {
+                if (ConfigHandler.shouldPlaySounds()) {
+                    player.playSound(clickedLocation, Sound.BLOCK_CROP_BREAK, 1, 1);
+                }
+                if (ConfigHandler.showBreakParticles()) {
+                    clickedLocation.getWorld().spawnParticle(Particle.BLOCK_DUST,clickedLocation,20,clickedSpot.getBlockData());
+                }
+            }
             event.setCancelled(true);
+            event.getClickedBlock().breakNaturally(itemUsed);
             api.logRemoval(
                     player.getName(),
                     clickedSpot.getLocation(),
                     clickedSpot.getType(),
                     clickedCocoa);
-            event.getClickedBlock().breakNaturally(itemUsed);
             cocoaData.setFacing(facing);
             clickedSpot.setBlockData(cocoaData);
             api.logPlacement(
@@ -84,6 +94,14 @@ public class InteractListenerDependsCoreprotect implements Listener {
             return;
         }
         event.setCancelled(true);
+        if (isRightClick) {
+            if (ConfigHandler.shouldPlaySounds()) {
+                player.playSound(clickedLocation, Sound.BLOCK_CROP_BREAK, 1, 1);
+            }
+            if (ConfigHandler.showBreakParticles()) {
+                clickedLocation.getWorld().spawnParticle(Particle.BLOCK_DUST,clickedLocation,20,clickedSpot.getBlockData());
+            }
+        }
         api.logRemoval(
                 player.getName(),
                 clickedSpot.getLocation(),

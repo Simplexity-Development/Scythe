@@ -18,9 +18,10 @@ public class HelpCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if(sender.hasPermission(ScythePermission.USE.getPermission())) {
-            sender.sendMessage(miniMessage.deserialize(Message.PREFIX.getMessage()) + "\n" + Message.HELP_MAIN.getMessage() +
+            sender.sendMessage(miniMessage.deserialize((Message.PREFIX.getMessage() +
+                    "\n" + Message.HELP_MAIN.getMessage() +
                     "\n" + Message.HELP_RELOAD.getMessage() +
-                    "\n" + Message.HELP_TOGGLE.getMessage());
+                    "\n" + Message.HELP_TOGGLE.getMessage())));
             return;
         }
         sender.sendMessage(miniMessage.deserialize(Message.NO_PERMISSION.getMessage()));

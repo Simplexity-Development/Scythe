@@ -12,10 +12,12 @@ public class Defaults {
         FileConfiguration config = instance.getConfig();
         config.addDefault("require-hoe", false);
         config.addDefault("allow-right-click-to-harvest", true);
+        config.addDefault("play-sounds", true);
+        config.addDefault("break-particles", true);
         config.addDefault("crops", List.of("BEETROOTS", "CARROTS", "COCOA", "NETHER_WART", "POTATOES", "WHEAT"));
         config.addDefault("prefix","<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset>");
-        config.addDefault("toggle-on", "<green>Scythe toggled on!");
-        config.addDefault("toggle-off", "<red>Scythe toggled off!");
+        config.addDefault("toggle-on", "<prefix><green>Scythe toggled on!");
+        config.addDefault("toggle-off", "<prefix><red>Scythe toggled off!");
         config.addDefault("unknown-command", "<red>Unknown Command");
         config.addDefault("config-reload", "<gold>Scythe Config Reloaded!");
         config.addDefault("no-permission", "<red>You do not have the required permissions to run this command");

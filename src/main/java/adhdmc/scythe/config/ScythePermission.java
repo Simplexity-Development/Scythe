@@ -5,7 +5,7 @@ import org.bukkit.util.permissions.DefaultPermissions;
 
 public enum ScythePermission {
     USE("scythe.use"),
-    TOGGLE_COMMAND("scythe.use.toggle"),
+    TOGGLE_COMMAND("scythe.toggle"),
     RELOAD_COMMAND("scythe.reload");
     final String permission;
     ScythePermission(String permission) {

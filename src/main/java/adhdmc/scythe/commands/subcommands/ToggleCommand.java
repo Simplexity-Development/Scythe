@@ -7,6 +7,7 @@ import adhdmc.scythe.config.Defaults;
 import adhdmc.scythe.config.Message;
 import adhdmc.scythe.config.ScythePermission;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -30,14 +31,14 @@ public class ToggleCommand extends SubCommand {
         }
         if (!(sender.hasPermission(ScythePermission.TOGGLE_COMMAND.getPermission()))
                 && sender.hasPermission(ScythePermission.USE.getPermission())) {
-            sender.sendMessage(miniMessage.deserialize(Message.PREFIX.getMessage()) + Message.NO_PERMISSION.getMessage());
+            sender.sendMessage(miniMessage.deserialize(Message.NO_PERMISSION.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
             return;
         }
         if (toggleSetting((Player) sender)) {
-            sender.sendMessage(miniMessage.deserialize(Message.PREFIX.getMessage()) + Message.TOGGLE_ON.getMessage());
+            sender.sendMessage(miniMessage.deserialize(Message.TOGGLE_ON.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
             return;
         }
-        sender.sendMessage(miniMessage.deserialize(Message.PREFIX.getMessage()) + Message.TOGGLE_OFF.getMessage());
+        sender.sendMessage(miniMessage.deserialize(Message.TOGGLE_OFF.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
     }
 
     private boolean toggleSetting(Player player) {
