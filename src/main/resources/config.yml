@@ -1,7 +1,6 @@
 #Scythe
 require-hoe: false
 right-click-to-harvest: true
-#
 play-sounds: true
 break-particles: true
 #crops the plugin should work on

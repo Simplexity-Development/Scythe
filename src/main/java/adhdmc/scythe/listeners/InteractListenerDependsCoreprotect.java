@@ -61,7 +61,10 @@ public class InteractListenerDependsCoreprotect implements Listener {
         if (ConfigHandler.isRequireHoe() && !MaterialTags.HOES.isTagged(itemUsed.getType())){
             return;
         }
-        if (clickedCrop.getMaximumAge() != clickedCrop.getAge()) {
+        if ((clickedCrop.getMaximumAge() != clickedCrop.getAge()) && isRightClick) {
+            return;
+        }
+        if ((clickedCrop.getMaximumAge() != clickedCrop.getAge()) && !isRightClick) {
             event.setCancelled(true);
             return;
         }
