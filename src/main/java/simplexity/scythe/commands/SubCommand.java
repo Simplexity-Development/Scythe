@@ -1,4 +1,4 @@
-package adhdmc.scythe.commands;
+package simplexity.scythe.commands;
 
 import org.bukkit.command.CommandSender;
 
@@ -9,7 +9,7 @@ public abstract class SubCommand {
     private final String description;
     private final String syntax;
 
-    public SubCommand(String name, String description, String syntax){
+    public SubCommand(String name, String description, String syntax) {
         this.name = name;
         this.description = description;
         this.syntax = syntax;
@@ -27,7 +27,7 @@ public abstract class SubCommand {
         return syntax;
     }
 
-    public abstract void execute  (CommandSender sender, String[] args);
+    public abstract void execute(CommandSender sender, String[] args);
 
     public abstract List<String> getSubcommandArguments(CommandSender sender, String[] args);
 }

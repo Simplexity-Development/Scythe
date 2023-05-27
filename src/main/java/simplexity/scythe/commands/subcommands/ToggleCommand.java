@@ -1,11 +1,5 @@
-package adhdmc.scythe.commands.subcommands;
+package simplexity.scythe.commands.subcommands;
 
-import adhdmc.scythe.commands.SubCommand;
-import adhdmc.scythe.config.ConfigHandler;
-import adhdmc.scythe.Scythe;
-import adhdmc.scythe.config.Defaults;
-import adhdmc.scythe.config.Message;
-import adhdmc.scythe.config.ScythePermission;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.NamespacedKey;
@@ -13,17 +7,21 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import simplexity.scythe.Scythe;
+import simplexity.scythe.commands.SubCommand;
+import simplexity.scythe.config.Message;
+import simplexity.scythe.config.ScythePermission;
 
 import java.util.List;
-import java.util.Map;
 
 public class ToggleCommand extends SubCommand {
     private static final MiniMessage miniMessage = Scythe.getMiniMessage();
     public static final NamespacedKey functionToggle = new NamespacedKey(Scythe.getInstance(), "functiontoggle");
 
     public ToggleCommand() {
-        super("toggle", "Toggles scythe on and off","/scythe toggle");
+        super("toggle", "Toggles scythe on and off", "/scythe toggle");
     }
+
     public void execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(miniMessage.deserialize(Message.NOT_A_PLAYER.getMessage()));
@@ -45,19 +43,20 @@ public class ToggleCommand extends SubCommand {
         PersistentDataContainer pdc = player.getPersistentDataContainer();
         if (pdc.get(functionToggle, PersistentDataType.BYTE) != null) {
             Byte pdcToggle = pdc.get(functionToggle, PersistentDataType.BYTE);
-            if (pdcToggle != null && pdcToggle.equals((byte)1)) {
-                pdc.set(functionToggle, PersistentDataType.BYTE, (byte)0);
+            if (pdcToggle != null && pdcToggle.equals((byte) 1)) {
+                pdc.set(functionToggle, PersistentDataType.BYTE, (byte) 0);
                 return false;
             }
-            pdc.set(functionToggle, PersistentDataType.BYTE, (byte)1);
+            pdc.set(functionToggle, PersistentDataType.BYTE, (byte) 1);
             return true;
         }
-        pdc.set(functionToggle, PersistentDataType.BYTE, (byte)0);
+        pdc.set(functionToggle, PersistentDataType.BYTE, (byte) 0);
         return false;
     }
+
     @Override
     public List<String> getSubcommandArguments(CommandSender sender, String[] args) {
         return null;
     }
-    }
+}
 

@@ -1,23 +1,24 @@
-package adhdmc.scythe.commands.subcommands;
+package simplexity.scythe.commands.subcommands;
 
-import adhdmc.scythe.Scythe;
-import adhdmc.scythe.commands.SubCommand;
-import adhdmc.scythe.config.Message;
-import adhdmc.scythe.config.ScythePermission;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
+import simplexity.scythe.Scythe;
+import simplexity.scythe.commands.SubCommand;
+import simplexity.scythe.config.Message;
+import simplexity.scythe.config.ScythePermission;
 
 import java.util.List;
 
 public class HelpCommand extends SubCommand {
     MiniMessage miniMessage = Scythe.getMiniMessage();
-    public HelpCommand(){
-        super ("help","Scythe Info", "/scythe help");
+
+    public HelpCommand() {
+        super("help", "Scythe Info", "/scythe help");
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(sender.hasPermission(ScythePermission.USE.getPermission())) {
+        if (sender.hasPermission(ScythePermission.USE.getPermission())) {
             sender.sendMessage(miniMessage.deserialize((Message.PREFIX.getMessage() +
                     "\n" + Message.HELP_MAIN.getMessage() +
                     "\n" + Message.HELP_RELOAD.getMessage() +

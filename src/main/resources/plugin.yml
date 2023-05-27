@@ -1,6 +1,6 @@
 name: Scythe
 version: '${project.version}'
-main: adhdmc.scythe.Scythe
+main: simplexity.scythe.Scythe
 author: _Rhythmic
 website: https://github.com/ADHDMC/Scythe
 api-version: 1.18
