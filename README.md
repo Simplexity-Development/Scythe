@@ -48,6 +48,37 @@
 4. Edit the configuration file located in the plugins/Scythe folder to your liking.
 5. Restart the server for the changes to take effect.
 
+## API
+
+### [Javadocs](https://simplexity-development.github.io/Scythe/index.html)
+
+### Maven
+```xml
+<repository>
+  <id>modrinth-repo</id>
+  <url>https://api.modrinth.com/maven/</url>
+</repository>
+
+<dependency>
+  <groupId>maven.modrinth</groupId>
+  <artifactId>scythe</artifactId>
+  <version>4.0</version>
+  <scope>provided</scope>
+</dependency>
+```
+
+### Gradle
+```gradle
+exclusiveContent {
+    forRepository { maven { url = "https://api.modrinth.com/maven" } }
+    filter { includeGroup "maven.modrinth" }
+}
+
+dependencies {
+    compileOnly 'maven.modrinth:scythe:4.0'
+}
+```
+
 ### Support
 
 If you need any help with the Scythe plugin, please open an issue on the GitHub repository or join our [Discord server](https://discord.gg/qe3YQrbegA) for support.
