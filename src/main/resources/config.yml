@@ -32,8 +32,8 @@ allowed-crops:
 
 #Lang Options
 prefix: "<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset> "
-toggle-on: "<prefix><green>Scythe toggled on!"
-toggle-off: "<prefix><red>Scythe toggled off!"
+toggle-on: "<prefix><green>Scythe functionality toggled on!"
+toggle-off: "<prefix><red>Scythe functionality toggled off!"
 unknown-command: "<red>Unknown Command. Use /scythe help to see commands list."
 config-reload: "<gold>Scythe Config Reloaded!"
 no-permission: "<red>You do not have the required permissions to run this command"

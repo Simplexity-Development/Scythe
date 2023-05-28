@@ -1,33 +1,18 @@
 package simplexity.scythe.commands;
 
 import org.bukkit.command.CommandSender;
-
-import java.util.List;
+import org.bukkit.permissions.Permission;
 
 public abstract class SubCommand {
-    private final String name;
-    private final String description;
-    private final String syntax;
+    private final Permission permission;
 
-    public SubCommand(String name, String description, String syntax) {
-        this.name = name;
-        this.description = description;
-        this.syntax = syntax;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getSyntax() {
-        return syntax;
+    public SubCommand(Permission permission) {
+        this.permission = permission;
     }
 
     public abstract void execute(CommandSender sender, String[] args);
 
-    public abstract List<String> getSubcommandArguments(CommandSender sender, String[] args);
+    public Permission getPermission() {
+        return permission;
+    }
 }

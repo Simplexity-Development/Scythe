@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import simplexity.scythe.config.ConfigHandler;
 import simplexity.scythe.events.HarvestEvent;
 import simplexity.scythe.events.PlantEvent;
 
@@ -46,6 +47,10 @@ public class InteractListener implements Listener {
         PlantEvent plantEvent = new PlantEvent(player, block, replantBlockData);
         Bukkit.getPluginManager().callEvent(plantEvent);
         if (plantEvent.isCancelled()) return;
+        if (ConfigHandler.getInstance().shouldRequireToolReplant() && !harvestEvent.wasConfiguredToolUsed()) {
+            plantEvent.setCancelled(true);
+            return;
+        }
         plantEvent.prePlantChecks();
         if (plantEvent.isCancelled()) return;
         plantEvent.replantCrop();

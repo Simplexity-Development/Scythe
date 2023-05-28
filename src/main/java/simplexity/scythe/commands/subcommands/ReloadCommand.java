@@ -9,13 +9,11 @@ import simplexity.scythe.config.ConfigHandler;
 import simplexity.scythe.config.Message;
 import simplexity.scythe.config.ScythePermission;
 
-import java.util.List;
-
 public class ReloadCommand extends SubCommand {
     MiniMessage miniMessage = Scythe.getMiniMessage();
 
     public ReloadCommand() {
-        super("reload", "Reloads the Scythe Plugin", "/scythe reload");
+        super(ScythePermission.RELOAD_COMMAND.getPermission());
     }
 
     @Override
@@ -27,10 +25,5 @@ public class ReloadCommand extends SubCommand {
             return;
         }
         sender.sendMessage(miniMessage.deserialize(Message.NO_PERMISSION.getMessage()));
-    }
-
-    @Override
-    public List<String> getSubcommandArguments(CommandSender sender, String[] args) {
-        return null;
     }
 }

@@ -20,9 +20,14 @@ public class CommandHandler implements CommandExecutor, TabExecutor {
     MiniMessage miniMessage = Scythe.getMiniMessage();
 
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        ArrayList<String> tabbableCommands = new ArrayList<>(Arrays.asList("toggle", "reload", "help"));
+        ArrayList<String> tabCompleteCommands = new ArrayList<>();
+        subcommandList.forEach((string, subcommand) -> {
+            if (sender.hasPermission(subcommand.getPermission())) {
+                tabCompleteCommands.add(string);
+            }
+        });
         if (args.length == 1) {
-            return tabbableCommands;
+            return tabCompleteCommands;
         }
         return null;
     }
@@ -30,25 +35,13 @@ public class CommandHandler implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         if (args.length == 0) {
-            String url;
-            if (Scythe.getInstance().getDescription().getWebsite() != null) {
-                url = Scythe.getInstance().getDescription().getWebsite();
-            } else {
-                url = "https://github.com/ADHDMC";
-            }
-            String version = Scythe.getInstance().getDescription().getVersion();
-            sender.sendMessage(miniMessage.deserialize(
-                    "<click:open_url:'<website>'><hover:show_text:'<gray>Click here to visit the GitHub!'>" +
-                            "<green>Scythe Version: <version> </hover></click><aqua>| Authors:" +
-                            "<click:open_url:'https://github.com/RhythmicSys'>" +
-                            "<hover:show_text:'<gray>Click here to visit Rhythmic\\'s GitHub!'>" +
-                            "<dark_aqua> Rhythmic",
-                    Placeholder.parsed("website", url),
-                    Placeholder.parsed("version", version)));
+            String url = "https://github.com/Simplexity-Development/Scythe";
+            @SuppressWarnings("deprecation") String version = Scythe.getInstance().getDescription().getVersion();
+            sender.sendMessage(miniMessage.deserialize("<click:open_url:'<website>'><hover:show_text:'<gray>Click here to visit the GitHub!'>" + "<green>Scythe Version: <version> </hover></click><aqua>| Authors:" + "<click:open_url:'" + url + "'>" + "<hover:show_text:'<gray>Click here to visit the Scythe GitHub!'>" + "<dark_aqua> Rhythmic", Placeholder.parsed("website", url), Placeholder.parsed("version", version)));
             return true;
         }
         String command = args[0].toLowerCase();
-        if (subcommandList.containsKey(command)) {
+        if (subcommandList.containsKey(command) && sender.hasPermission(subcommandList.get(command).getPermission())) {
             subcommandList.get(command).execute(sender, Arrays.copyOfRange(args, 1, args.length));
         } else {
             sender.sendMessage(miniMessage.deserialize(Message.UNKNOWN_COMMAND.getMessage()));

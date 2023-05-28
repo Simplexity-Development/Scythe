@@ -2,61 +2,42 @@ package simplexity.scythe.commands.subcommands;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import simplexity.scythe.Scythe;
 import simplexity.scythe.commands.SubCommand;
 import simplexity.scythe.config.Message;
 import simplexity.scythe.config.ScythePermission;
-
-import java.util.List;
+import simplexity.scythe.events.ToggleEvent;
 
 public class ToggleCommand extends SubCommand {
     private static final MiniMessage miniMessage = Scythe.getMiniMessage();
-    public static final NamespacedKey functionToggle = new NamespacedKey(Scythe.getInstance(), "functiontoggle");
+    public static final NamespacedKey toggleKey = new NamespacedKey(Scythe.getInstance(), "functiontoggle");
 
     public ToggleCommand() {
-        super("toggle", "Toggles scythe on and off", "/scythe toggle");
+        super(ScythePermission.TOGGLE_COMMAND.getPermission());
     }
 
     public void execute(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(miniMessage.deserialize(Message.NOT_A_PLAYER.getMessage()));
             return;
         }
-        if (!(sender.hasPermission(ScythePermission.TOGGLE_COMMAND.getPermission()))
-                && sender.hasPermission(ScythePermission.USE.getPermission())) {
-            sender.sendMessage(miniMessage.deserialize(Message.NO_PERMISSION.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
+        if (!((player.hasPermission(ScythePermission.TOGGLE_COMMAND.getPermission())) && player.hasPermission(ScythePermission.USE.getPermission()))) {
+            player.sendMessage(miniMessage.deserialize(Message.NO_PERMISSION.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
             return;
         }
-        if (toggleSetting((Player) sender)) {
-            sender.sendMessage(miniMessage.deserialize(Message.TOGGLE_ON.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
+        ToggleEvent toggleEvent = new ToggleEvent(player, toggleKey);
+        Bukkit.getPluginManager().callEvent(toggleEvent);
+        if (toggleEvent.isCancelled()) return;
+        byte toggleState = toggleEvent.getCurrentToggleState();
+        if (toggleState == (byte) 0) {
+            toggleEvent.setDisabled();
             return;
         }
-        sender.sendMessage(miniMessage.deserialize(Message.TOGGLE_OFF.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
-    }
-
-    private boolean toggleSetting(Player player) {
-        PersistentDataContainer pdc = player.getPersistentDataContainer();
-        if (pdc.get(functionToggle, PersistentDataType.BYTE) != null) {
-            Byte pdcToggle = pdc.get(functionToggle, PersistentDataType.BYTE);
-            if (pdcToggle != null && pdcToggle.equals((byte) 1)) {
-                pdc.set(functionToggle, PersistentDataType.BYTE, (byte) 0);
-                return false;
-            }
-            pdc.set(functionToggle, PersistentDataType.BYTE, (byte) 1);
-            return true;
-        }
-        pdc.set(functionToggle, PersistentDataType.BYTE, (byte) 0);
-        return false;
-    }
-
-    @Override
-    public List<String> getSubcommandArguments(CommandSender sender, String[] args) {
-        return null;
+        toggleEvent.setEnabled();
     }
 }
 

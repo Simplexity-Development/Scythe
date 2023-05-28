@@ -24,6 +24,7 @@ public final class Scythe extends JavaPlugin {
     public void onEnable() {
         instance = this;
         logger = this.getLogger();
+        //noinspection unused - Bstats requirement
         Metrics metrics = new Metrics(this, 16540);
         try {
             Class.forName("net.kyori.adventure.text.minimessage.MiniMessage");

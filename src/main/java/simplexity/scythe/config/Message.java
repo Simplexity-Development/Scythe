@@ -6,8 +6,8 @@ import simplexity.scythe.Scythe;
 public enum Message {
     CONSOLE_PREFIX("[Scythe] "),
     PREFIX("<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset>"),
-    TOGGLE_ON("<prefix><green>Scythe toggled on!"),
-    TOGGLE_OFF("<prefix><red>Scythe toggled off!"),
+    TOGGLE_ON("<prefix><green>Scythe functionality toggled on!"),
+    TOGGLE_OFF("<prefix><red>Scythe functionality toggled off!"),
     UNKNOWN_COMMAND("<red>Unknown Command"),
     CONFIG_RELOAD("<gold>Scythe Config Reloaded!"),
     NO_PERMISSION("<red>You do not have the required Permission to run this command"),

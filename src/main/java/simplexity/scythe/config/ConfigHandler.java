@@ -15,6 +15,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * Verifies configuration and sets values
+ */
 public class ConfigHandler {
     private static ConfigHandler instance;
 
@@ -34,8 +37,8 @@ public class ConfigHandler {
     private boolean playSounds;
     private Sound configSound;
     private Particle configParticle;
-    private int soundVolume;
-    private int soundPitch;
+    private float soundVolume;
+    private float soundPitch;
     private boolean breakParticles;
     private int particleCount;
     private final ArrayList<Material> configuredCrops = new ArrayList<>();
@@ -52,8 +55,18 @@ public class ConfigHandler {
         requireToolReplant = config.getBoolean("require-tool-for-replant");
         requireToolRightClickHarvest = config.getBoolean("require-tool-for-right-click-harvest");
         playSounds = config.getBoolean("play-sounds");
-        soundVolume = config.getInt("sound-volume");
-        soundPitch = config.getInt("sound-pitch");
+        if (0 < config.getDouble("sound-volume") && config.getDouble("sound-volume") < 2) {
+            soundVolume = (float) config.getDouble("sound-volume");
+        } else {
+            logger.warning("Configured of " + config.getDouble("sound-volume") + " was unable to be set. Please be sure you've chosen a number between 0 and 2");
+            soundVolume  = 1f;
+        }
+        if (0 < config.getDouble("sound-pitch") && config.getDouble("sound-pitch") < 2) {
+            soundPitch = (float) config.getDouble("sound-pitch");
+        } else {
+            logger.warning("Configured of " + config.getDouble("sound-pitch") + " was unable to be set. Please be sure you've chosen a number between 0 and 2");
+            soundPitch  = 1f;
+        }
         breakParticles = config.getBoolean("break-particles");
         particleCount = config.getInt("particle-count");
     }
@@ -101,6 +114,7 @@ public class ConfigHandler {
             }
             BlockData cropBlock = Bukkit.createBlockData(crop);
             try {
+                //noinspection unused - This is needed to check that the config is valid
                 Ageable ageableCrop = (Ageable) cropBlock;
             } catch (ClassCastException exception) {
                 logger.warning(Message.CONSOLE_PREFIX.getMessage() + configCrop + " is not a valid crop material. Please check to be sure you spelled everything correctly.");
@@ -156,11 +170,11 @@ public class ConfigHandler {
         return configSound;
     }
 
-    public int getSoundVolume() {
+    public float getSoundVolume() {
         return soundVolume;
     }
 
-    public int getSoundPitch() {
+    public float getSoundPitch() {
         return soundPitch;
     }
 
