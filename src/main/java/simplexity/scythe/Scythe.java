@@ -17,7 +17,6 @@ import java.util.logging.Logger;
 public final class Scythe extends JavaPlugin {
     private static Scythe instance;
     private static Logger logger;
-    private static boolean coreProtectEnabled;
     private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     @Override
@@ -35,7 +34,6 @@ public final class Scythe extends JavaPlugin {
             this.getLogger().warning("net.kyori.adventure.text.Component");
             this.getServer().getPluginManager().disablePlugin(this);
         }
-        coreProtectEnabled = instance.getServer().getPluginManager().isPluginEnabled("CoreProtect");
         Objects.requireNonNull(this.getCommand("scythe")).setExecutor(new CommandHandler());
         this.getServer().getPluginManager().registerEvents(new InteractListener(), this);
         this.saveDefaultConfig();

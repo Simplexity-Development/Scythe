@@ -16,14 +16,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
-import simplexity.scythe.Scythe;
 import simplexity.scythe.commands.subcommands.ToggleCommand;
 import simplexity.scythe.config.ConfigHandler;
 import simplexity.scythe.config.ScythePermission;
 import simplexity.scythe.hooks.CoreProtectHook;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 public class HarvestEvent extends Event implements Cancellable {
     private boolean cancelled;
@@ -43,34 +41,31 @@ public class HarvestEvent extends Event implements Cancellable {
     }
 
     public void preHarvestChecks() {
-        Logger logger = Scythe.getScytheLogger();
         if (!isCropAllowed()) {
-            logger.info("returning due to crop not being allowed");
             setCancelled(true);
             return;
         }
         if (isRightClick && !isRightClickHarvestEnabled()) {
-            logger.info("Returning due to the type being right-click, and right click not being allowed");
             setCancelled(true);
             return;
         }
         if ((isRightClick && getRequireToolRightClickHarvest()) && !wasConfiguredToolUsed()) {
-            logger.info("Returning due to right click and require right click being enabled, and required tool not being used");
             setCancelled(true);
             return;
         }
         if (!isAgeableBlock()) {
-            logger.info("returning due to block not being ageable");
             setCancelled(true);
             return;
         }
-        if (!player.hasPermission(ScythePermission.USE.getPermission())) {
-            logger.info("returning due to player not having permission");
+        if (!player.hasPermission(ScythePermission.USE_HARVEST.getPermission())) {
             setCancelled(true);
             return;
         }
         if (!playerPDCToggleEnabled()) {
-            logger.info("returning due to player having their toggle disabled");
+            setCancelled(true);
+            return;
+        }
+        if (!isCropFullGrown() && isRightClick) {
             setCancelled(true);
         }
     }
@@ -79,7 +74,7 @@ public class HarvestEvent extends Event implements Cancellable {
         preHarvestChecks();
         if (cancelled) return;
         if (!isCropFullGrown()) {
-            cancelled = true;
+            setCancelled(true);
             return;
         }
         block.breakNaturally(usedItem);
@@ -91,10 +86,8 @@ public class HarvestEvent extends Event implements Cancellable {
         }
         if (shouldShowParticles()) {
             if (getConfiguredParticle().equals(Particle.BLOCK_DUST)) {
-                Scythe.getScytheLogger().info("Configured particle is dust particle");
-                getCropLocation().getWorld().spawnParticle(Particle.BLOCK_DUST, getCropLocation(), getConfiguredParticleCount(), getCropBlockData());
+                getCropLocation().getWorld().spawnParticle(Particle.BLOCK_DUST, getCropLocation().toCenterLocation(), getConfiguredParticleCount(), getCropBlockData());
             } else {
-                Scythe.getScytheLogger().info("Configured particle is " + getConfiguredParticle());
                 getCropLocation().getWorld().spawnParticle(getConfiguredParticle(), getCropLocation(), getConfiguredParticleCount());
             }
         }

@@ -2,14 +2,24 @@ name: Scythe
 version: '${project.version}'
 main: simplexity.scythe.Scythe
 author: _Rhythmic
-website: https://github.com/ADHDMC/Scythe
-api-version: 1.18
+website: https://github.com/Simplexity-Development/Scythe
+api-version: 1.19
 permissions:
   scythe.use:
     description: Allow players to use Scythe Functionality
     default: op
+  scythe.use.harvest:
+    description: Allow players to harvest crops using Scythe functionality
+    default: op
+    children:
+      - scythe.use
+  scythe.use.replant:
+    description: Allow players to replant crops using Scythe functionality
+    default: op
+    children:
+     - scythe.use
   scythe.toggle:
-    description: Allow players to toggle Scythe on or off
+    description: Allow players to toggle Scythe functionality on or off
     default: op
   scythe.reload:
     description: Allows user to reload the Scythe plugin
