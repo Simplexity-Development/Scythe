@@ -11,12 +11,9 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-import simplexity.scythe.Scythe;
 import simplexity.scythe.config.ScythePermission;
 import simplexity.scythe.hooks.CoreProtectHook;
-
-import java.util.logging.Logger;
-
+@SuppressWarnings("unused")
 public class PlantEvent extends Event implements Cancellable {
     private boolean cancelled;
     private final Player player;
@@ -25,8 +22,6 @@ public class PlantEvent extends Event implements Cancellable {
     private BlockData plantedBlockData;
     private final CoreProtectAPI coreProtectAPI = CoreProtectHook.getInstance().getCoreProtect();
     private static final HandlerList handlerList = new HandlerList();
-
-    Logger logger = Scythe.getScytheLogger();
 
     public PlantEvent(Player player, Block block, BlockData originialBlockData) {
         this.player = player;

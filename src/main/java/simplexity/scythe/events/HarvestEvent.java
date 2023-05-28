@@ -23,6 +23,7 @@ import simplexity.scythe.hooks.CoreProtectHook;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class HarvestEvent extends Event implements Cancellable {
     private boolean cancelled;
     private final Player player;
@@ -39,7 +40,12 @@ public class HarvestEvent extends Event implements Cancellable {
         this.isRightClick = isRightClick;
         this.usedItem = usedItem;
     }
-
+    /**
+     * Performs pre-harvest checks to determine if the harvest action is allowed.
+     * <br>Checks for crop allowance, right-click harvesting permission, the use of configured tool for right-click harvesting, ageable block type, player permission, PDC (Persistent Data Container) toggle, and crop growth level (if right-click harvesting).
+     * <br>If any of the checks fail, the action is cancelled by calling the setCancelled() method and returning.
+     * <br>If all checks pass, the method completes without any issues.
+     */
     public void preHarvestChecks() {
         if (!isCropAllowed()) {
             setCancelled(true);
@@ -69,7 +75,16 @@ public class HarvestEvent extends Event implements Cancellable {
             setCancelled(true);
         }
     }
-
+    /**
+     * Harvests the crop at the specified location and performs additional actions such as breaking the block, logging the removal using CoreProtect API (if enabled),
+     * <br>playing sound, and showing particles based on the configuration settings.
+     * <br>The method performs pre-harvest checks by calling the preHarvestChecks() method, and returns immediately if the action has been cancelled.
+     * <br>If the crop is not fully grown, the method sets the action as cancelled and returns.
+     * <br>If the crop is full-grown, the block is broken using the usedItem parameter specified.
+     * <br>If CoreProtect API is enabled, the removal of the crop is logged using the CoreProtectAPIs logRemoval() method.
+     * <br>If sound is enabled, it will be played using the getConfiguredSound() method and the getConfiguredVolume() and getConfiguredPitch() settings to determine the volume and pitch.
+     * <br>If particles are enabled, the particle effect will be shown using the getConfiguredParticle(), getConfiguredParticleCount(), and getCropBlockData() settings to determine the type, count, and data of the particle.
+     */
     public void harvestCrop() {
         preHarvestChecks();
         if (cancelled) return;
@@ -93,10 +108,24 @@ public class HarvestEvent extends Event implements Cancellable {
         }
     }
 
+    /**
+     * Returns a boolean value that indicates whether CoreProtect API is enabled or not.
+     * <br>The method checks if the coreProtectAPI object is null or not.
+     * <br>If the object is not null, it means that the CoreProtect API is enabled and the method returns true.
+     * <br>If the object is null, it means that the CoreProtect API is disabled and the method returns false.
+     * @return boolean
+     */
     public boolean isCoreProtectEnabled() {
         return coreProtectAPI != null;
     }
 
+    /**
+     * Returns a boolean value that indicates whether the block is ageable or not.
+     * <br>The method attempts to cast the block's block data to an Ageable object using the getBlockData() method on the "block" object.
+     * <br>If the cast is successful, the method stores the Ageable object in the "ageable" variable and returns true.
+     * <br>If the cast fails, the method prints a stack trace and returns false.
+     * @return boolean
+     */
     public boolean isAgeableBlock() {
         try {
             ageable = (Ageable) block.getBlockData();
@@ -107,112 +136,236 @@ public class HarvestEvent extends Event implements Cancellable {
         return true;
     }
 
+    /**
+     * Returns a boolean value that indicates whether the crop is fully grown or not.
+     * <br>The method obtains the maximum age of the crop and its current age using the getMaximumAge() and getAge() methods on the "ageable" object.
+     * <br>It then checks if the current age is equal to the maximum age and returns the result.
+     * @return boolean
+     */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isCropFullGrown() {
         int maxAge = ageable.getMaximumAge();
         int currentAge = ageable.getAge();
         return currentAge == maxAge;
     }
-
+    /**
+     * Returns a boolean value that indicates whether sounds should be played or not.
+     * <br>The method internally gets the instance of the ConfigHandler class and calls its shouldPlaySounds() method to retrieve the value.
+     * @return boolean
+     */
     public boolean shouldPlaySound() {
         return ConfigHandler.getInstance().shouldPlaySounds();
     }
-
+    /**
+     * Returns a boolean value that indicates whether break particles should be shown or not.
+     * <br>The method internally gets the instance of the ConfigHandler class and calls its showBreakParticles() method to retrieve the value.
+     * @return boolean
+     */
     public boolean shouldShowParticles() {
         return ConfigHandler.getInstance().showBreakParticles();
     }
-
+    /**
+     * Returns the block data of the crop.
+     * <br>The method returns the block data of the block where the crop is planted.
+     * @return BlockData
+     */
     public BlockData getCropBlockData() {
         return block.getBlockData();
     }
-
+    /**
+     * Returns the location of the block where the crop is planted.
+     * @return Location
+     */
     public Location getCropLocation() {
         return block.getLocation();
     }
-
+    /**
+     * Returns the material of the crop.
+     * <br>The method returns the type of the block where the crop is planted.
+     * @return Material
+     */
     public Material getCropMaterial() {
         return block.getType();
     }
 
+    /**
+     * Returns a boolean value indicating whether the crop is allowed or not.
+     * <br>The method internally checks whether the crop material is present in the configured crop list or not.
+     * @return boolean
+     */
     public boolean isCropAllowed() {
         return getConfiguredCropList().contains(getCropMaterial());
     }
 
+    /**
+     * Returns a boolean value that indicates whether right-click harvest is enabled or not.
+     * <br>The method internally gets the ConfigHandler instance and calls its allowRightClickHarvest() method to retrieve the value.
+     * @return boolean
+     */
     public boolean isRightClickHarvestEnabled() {
         return ConfigHandler.getInstance().allowRightClickHarvest();
     }
 
+    /**
+     * Returns a boolean value that specifies whether the configured tool was used or not.
+     * <br>The method internally checks whether the used item is present in the configured tool list or not.
+     * @return boolean
+     */
     public boolean wasConfiguredToolUsed() {
         return getConfiguredToolList().contains(usedItem);
     }
 
+    /**
+     * Returns a boolean value that specifies whether tool right-click harvesting is required or not.
+     * <br>The method internally gets the instance of the ConfigHandler class and calls its shouldRequireToolRightClickHarvest() method to retrieve the value.
+     * @return boolean
+     */
     public boolean getRequireToolRightClickHarvest() {
         return ConfigHandler.getInstance().shouldRequireToolRightClickHarvest();
     }
-
+    /**
+     * Returns a list of ItemStack objects that represent the configured tools.
+     * <br>The method internally gets the instance of the ConfigHandler class and calls its getConfiguredTools() method to retrieve the list.
+     * @return List<ItemStack>
+     */
     public List<ItemStack> getConfiguredToolList() {
         return ConfigHandler.getInstance().getConfiguredTools();
     }
 
+    /**
+     * Returns a list of Material objects that represent the configured crops.
+     * <br>The method internally gets the instance of the ConfigHandler class and calls its getConfiguredCrops() method to retrieve the list.
+     * @return List<Material>
+     */
     public List<Material> getConfiguredCropList() {
         return ConfigHandler.getInstance().getConfiguredCrops();
     }
-
+    /**
+     * Returns a Sound object that represents the configured sound.
+     * <br>The method internally gets the instance of the ConfigHandler class and calls its getConfigSound() method to retrieve the sound.
+     * @return Sound
+     */
     public Sound getConfiguredSound() {
         return ConfigHandler.getInstance().getConfigSound();
     }
-
+    /**
+     * Returns an integer that represents the configured sound volume.
+     * <br>The method internally gets the instance of the ConfigHandler class and calls its getSoundVolume() method to retrieve the configured sound volume.
+     * @return int
+     */
     public int getConfiguredVolume() {
         return ConfigHandler.getInstance().getSoundVolume();
     }
-
+    /**
+     * Returns an integer that represents the configured sound pitch.
+     * <br>The method internally gets the instance of the ConfigHandler class and calls its getSoundPitch() method to retrieve the configured sound pitch.
+     * @return int
+     */
     public int getConfiguredPitch() {
         return ConfigHandler.getInstance().getSoundPitch();
     }
-
+    /**
+     * Returns a Particle object that represents the configured particle.
+     * <br>The method internally gets the instance of the ConfigHandler class and calls its getConfigParticle() method to retrieve the particle.
+     * @return Particle
+     */
     public Particle getConfiguredParticle() {
         return ConfigHandler.getInstance().getConfigParticle();
     }
-
+    /**
+     * Returns an integer that represents the configured particle count.
+     * <br>The method internally gets the instance of the ConfigHandler class and calls its getParticleCount() method to retrieve the configured particle count.
+     * @return int
+     */
     public int getConfiguredParticleCount() {
         return ConfigHandler.getInstance().getParticleCount();
     }
-
+    /**
+     * Returns a boolean value that indicates whether the player's PDC (Persistent Data Container) toggle is enabled or not.
+     * <br>The method obtains the player's PDC using the getPersistentDataContainer() method on the "player" object.
+     * <br>It then uses the PersistentDataContainer's getOrDefault() method to retrieve the value of the "functionToggle" key and checks if it is equal to 0.
+     * @return boolean
+     */
     public boolean playerPDCToggleEnabled() {
         PersistentDataContainer playerPDC = player.getPersistentDataContainer();
         return playerPDC.getOrDefault(ToggleCommand.functionToggle, PersistentDataType.BYTE, (byte) 0) == (byte) 0;
     }
 
+    /**
+     * Returns a boolean value that indicates whether the event is cancelled or not.
+     * <br>The method returns the value of the "cancelled" flag, which is set by the setCancelled() method.
+     * @return boolean
+     */
     @Override
     public boolean isCancelled() {
         return cancelled;
     }
 
+    /**
+     * Sets the cancelled flag to the specified value.
+     * <br>The method sets the value of the "cancelled" flag to the specified boolean value.
+     * @param cancel boolean
+     */
     @Override
     public void setCancelled(boolean cancel) {
         cancelled = cancel;
     }
-
+    /**
+     * @apiNote This method is for API purposes and is not used internally
+     * <br>Returns the HandlerList object for the event.
+     * <br>The method returns the static "handlerList" object, which is an instance of the HandlerList class.
+     * <br>The HandlerList class is a built-in Bukkit class that provides methods for registering and unregistering listeners for events.
+     * @return HandlerList
+     */
     public static HandlerList getHandlerList() {
         return handlerList;
     }
-
+    /**
+     * @apiNote This method is for API purposes and is not used internally
+     * <br>Returns the HandlerList object for the event.
+     * <br>The method returns the static "handlerList" object, which is an instance of the HandlerList class.
+     * <br>The HandlerList class is a built-in Bukkit class that provides methods for registering and unregistering listeners for events.
+     * @return HandlerList
+     */
     @Override
     public @NotNull HandlerList getHandlers() {
         return handlerList;
     }
-
+    /**
+     * @apiNote This method is for API purposes and is not used internally
+     * <br>Returns a Player object that represents the player involved in this event.
+     * @return Player
+     */
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     * @apiNote This method is for API purposes and is not used internally
+     * <br>Returns a Block object that represents the block involved in this event.
+     * @return Block
+     */
     public Block getBlock() {
         return block;
     }
 
+    /**
+     * @apiNote This method is for API purposes and is not used internally
+     * <br>Returns a boolean value that indicates whether the interaction was a right-click action.
+     * <br>The method returns the value of the "isRightClick" boolean field, which is set by the calling code to indicate whether the interaction was a right-click action or not.
+     * <br>If the value is true, it means that the interaction was a right-click action; otherwise, it was not.
+     * @return boolean
+     */
     public boolean isRightClick() {
         return isRightClick;
     }
-
+    /**
+     * @apiNote This method is for API purposes and is not used internally
+     * <br>Returns an ItemStack object that represents the item used during interaction.
+     * <br>The method returns the value of the "usedItem" field, which is set by the calling code to represent the item used during interaction.
+     * <br>The ItemStack object encapsulates the item's information, such as its type, count and metadata.
+     * @return ItemStack
+     */
     public ItemStack getUsedItem() {
         return usedItem;
     }
