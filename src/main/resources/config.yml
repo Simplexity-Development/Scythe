@@ -1,10 +1,27 @@
 #Scythe
-require-hoe: false
 right-click-to-harvest: true
+require-tool-for-replant: false
+require-tool-for-right-click-harvest: false
+#Only applies if "require-tool-for-replant" or "require-tool-for-right-click-harvest" is true.
+#These must be declared as you would write them to summon them in vanilla minecraft
+replant-tools:
+  - "minecraft:wooden_hoe"
+  - "minecraft:stone_hoe"
+  - "minecraft:iron_hoe"
+  - "minecraft:golden_hoe"
+  - "minecraft:diamond_hoe"
+  - "minecraft:netherite_hoe"
+
 play-sounds: true
+sound: BLOCK_CROP_BREAK
+sound-volume: 1
+sound-pitch: 1
 break-particles: true
+#If block dust is chosen, it will use the block that was broken to produce the particles
+particle: BLOCK_DUST
+particle-count: 20
 #crops the plugin should work on
-crops:
+allowed-crops:
   - BEETROOTS
   - CARROTS
   - COCOA
@@ -15,8 +32,8 @@ crops:
 
 #Lang Options
 prefix: "<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset> "
-toggle-on: "<prefix><green>Scythe toggled on!"
-toggle-off: "<prefix><red>Scythe toggled off!"
+toggle-on: "<prefix><green>Scythe functionality toggled on!"
+toggle-off: "<prefix><red>Scythe functionality toggled off!"
 unknown-command: "<red>Unknown Command. Use /scythe help to see commands list."
 config-reload: "<gold>Scythe Config Reloaded!"
 no-permission: "<red>You do not have the required permissions to run this command"
