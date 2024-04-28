@@ -11,7 +11,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import simplexity.scythe.Scythe;
-import simplexity.scythe.config.Message;
+import simplexity.scythe.config.LocaleHandler;
 
 /**
  * Called when a player runs the toggle command
@@ -36,32 +36,32 @@ public class ToggleEvent extends Event implements Cancellable {
      * @return byte
      */
 
-    public byte getCurrentToggleState() {
+    public boolean getCurrentToggleState() {
         PersistentDataContainer playerPDC = player.getPersistentDataContainer();
-        return playerPDC.getOrDefault(namespacedKey, PersistentDataType.BYTE, (byte) 0);
+        return playerPDC.getOrDefault(namespacedKey, PersistentDataType.BOOLEAN, Boolean.TRUE);
     }
 
     /**
      * Sets the toggle to be disabled in the player's PDC
-     * <br>Sets value to 1b
+     * <br>Sets value to false
      */
 
     public void setDisabled() {
         PersistentDataContainer playerPDC = player.getPersistentDataContainer();
-        playerPDC.set(namespacedKey, PersistentDataType.BYTE, (byte) 1);
-        player.sendMessage(miniMessage.deserialize(Message.TOGGLE_OFF.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
+        playerPDC.set(namespacedKey, PersistentDataType.BOOLEAN, Boolean.FALSE);
+        player.sendMessage(miniMessage.deserialize(LocaleHandler.getInstance().getToggleDisabled(), Placeholder.parsed("prefix", LocaleHandler.getInstance().getPrefix())));
     }
 
     /**
      * Sets the toggle to be enabled in the player's PDC
-     * <br>Sets value to 0b
-     * <br>Calls sendPlayerFeedback() with the ENABLED_MESSAGE_FORMAT message
+     * <br>Sets value to true
+     * <br>Calls sendPlayerFeedback() with the toggleEnabled message
      */
 
     public void setEnabled() {
         PersistentDataContainer playerPDC = player.getPersistentDataContainer();
-        playerPDC.set(namespacedKey, PersistentDataType.BYTE, (byte) 0);
-        player.sendMessage(miniMessage.deserialize(Message.TOGGLE_ON.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
+        playerPDC.set(namespacedKey, PersistentDataType.BOOLEAN, Boolean.TRUE);
+        player.sendMessage(miniMessage.deserialize(LocaleHandler.getInstance().getToggleEnabled(), Placeholder.parsed("prefix", LocaleHandler.getInstance().getPrefix())));
     }
 
 

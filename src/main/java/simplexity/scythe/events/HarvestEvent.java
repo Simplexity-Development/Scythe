@@ -104,11 +104,7 @@ public class HarvestEvent extends Event implements Cancellable {
             getCropLocation().getWorld().playSound(getCropLocation(), getConfiguredSound(), getConfiguredVolume(), getConfiguredPitch());
         }
         if (shouldShowParticles()) {
-            if (getConfiguredParticle().equals(Particle.BLOCK_DUST)) {
-                getCropLocation().getWorld().spawnParticle(Particle.BLOCK_DUST, getCropLocation().toCenterLocation(), getConfiguredParticleCount(), getCropBlockData());
-            } else {
-                getCropLocation().getWorld().spawnParticle(getConfiguredParticle(), getCropLocation(), getConfiguredParticleCount());
-            }
+            getCropLocation().getWorld().spawnParticle(getConfiguredParticle(), getCropLocation().toCenterLocation(), getConfiguredParticleCount());
         }
     }
 
@@ -325,7 +321,7 @@ public class HarvestEvent extends Event implements Cancellable {
      */
     public boolean playerPDCToggleEnabled() {
         PersistentDataContainer playerPDC = player.getPersistentDataContainer();
-        return playerPDC.getOrDefault(ToggleCommand.toggleKey, PersistentDataType.BYTE, (byte) 0) == (byte) 0;
+        return playerPDC.getOrDefault(ToggleCommand.toggleKey, PersistentDataType.BOOLEAN, Boolean.TRUE);
     }
 
     /**

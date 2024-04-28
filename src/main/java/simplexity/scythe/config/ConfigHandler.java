@@ -46,7 +46,7 @@ public class ConfigHandler {
 
     public void configParser() {
         FileConfiguration config = Scythe.getInstance().getConfig();
-        Message.reloadMessages();
+        LocaleHandler.getInstance().loadLocale();
         setConfiguredCrops();
         setConfiguredTools();
         checkSound();
@@ -88,7 +88,8 @@ public class ConfigHandler {
             configParticle = Particle.valueOf(particle);
         } catch (IllegalArgumentException | NullPointerException e) {
             Scythe.getScytheLogger().warning(particle + " could not be cast to a particle. Please check your syntax and be sure you are choosing a sound from https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Particle.html");
-            Scythe.getScytheLogger().warning("Setting particle to BLOCK_DUST until a valid particle is provided");
+            Scythe.getScytheLogger().warning("Setting particle to CRIT until a valid particle is provided");
+            configParticle = Particle.CRIT;
         }
 
     }
@@ -99,7 +100,7 @@ public class ConfigHandler {
         List<String> cropList = Scythe.getInstance().getConfig().getStringList("allowed-crops");
         for (String configCrop : cropList) {
             if (Material.matchMaterial(configCrop) == null) {
-                logger.warning(Message.CONSOLE_PREFIX.getMessage() + configCrop + " is not a valid material. Please check to be sure you spelled everything correctly.");
+                logger.warning( configCrop + " is not a valid material. Please check to be sure you spelled everything correctly.");
                 continue;
             }
             Material crop = Material.matchMaterial(configCrop);
@@ -109,7 +110,7 @@ public class ConfigHandler {
                 continue;
             }
             if (!crop.isBlock()) {
-                logger.warning(Message.CONSOLE_PREFIX.getMessage() + configCrop + " is not a valid block material. Please check to be sure you spelled everything correctly.");
+                logger.warning(configCrop + " is not a valid block material. Please check to be sure you spelled everything correctly.");
                 continue;
             }
             BlockData cropBlock = Bukkit.createBlockData(crop);
@@ -117,7 +118,7 @@ public class ConfigHandler {
                 //noinspection unused - This is needed to check that the config is valid
                 Ageable ageableCrop = (Ageable) cropBlock;
             } catch (ClassCastException exception) {
-                logger.warning(Message.CONSOLE_PREFIX.getMessage() + configCrop + " is not a valid crop material. Please check to be sure you spelled everything correctly.");
+                logger.warning(configCrop + " is not a valid crop material. Please check to be sure you spelled everything correctly.");
                 continue;
             }
             configuredCrops.add(crop);

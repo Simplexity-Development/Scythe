@@ -1,0 +1,13 @@
+prefix: "<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset>"
+feedback:
+  toggle-enabled: "<prefix><green>Scythe functionality enabled!</green>"
+  toggle-disabled: "<prefix><grey>Scythe functionality <red>disabled</red>!</grey>"
+  config-reloaded: "<gold>Scythe Config Reloaded!</gold>"
+errors:
+  unknown-command: "<red>Unknown Command</red>"
+  no-permission: "<red>You do not have the required Permission to run this command</red>"
+  not-a-player: "Sorry! This command can only be run by a player"
+help:
+  main: "<grey>Scythe allows players to harvest grown crops without needing to replant</grey>"
+  toggle: "<yellow>/scythe toggle \n<grey>• Toggle scythe on or off</grey></yellow>"
+  reload: "<yellow>/scythe reload \n<grey>• Reloads config settings</grey></yellow>"

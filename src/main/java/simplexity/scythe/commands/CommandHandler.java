@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 import simplexity.scythe.Scythe;
-import simplexity.scythe.config.Message;
+import simplexity.scythe.config.LocaleHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +44,7 @@ public class CommandHandler implements CommandExecutor, TabExecutor {
         if (subcommandList.containsKey(command) && sender.hasPermission(subcommandList.get(command).getPermission())) {
             subcommandList.get(command).execute(sender, Arrays.copyOfRange(args, 1, args.length));
         } else {
-            sender.sendMessage(miniMessage.deserialize(Message.UNKNOWN_COMMAND.getMessage()));
+            sender.sendMessage(miniMessage.deserialize(LocaleHandler.getInstance().getUnknownCommand()));
         }
         return true;
     }

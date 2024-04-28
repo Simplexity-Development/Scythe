@@ -6,7 +6,7 @@
 
     <groupId>Simplexity</groupId>
     <artifactId>Scythe</artifactId>
-    <version>4.0</version>
+    <version>5.0</version>
     <packaging>jar</packaging>
 
     <name>Scythe</name>
@@ -83,7 +83,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.19.4-R0.1-SNAPSHOT</version>
+            <version>1.20.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

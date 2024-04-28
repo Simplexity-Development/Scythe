@@ -17,9 +17,9 @@ sound: BLOCK_CROP_BREAK
 sound-volume: 1
 sound-pitch: 1
 break-particles: true
-#If block dust is chosen, it will use the block that was broken to produce the particles
-particle: BLOCK_DUST
-particle-count: 20
+#Please choose a particle from this list: https://jd.papermc.io/paper/1.20/org/bukkit/Particle.html
+particle: CRIT
+particle-count: 4
 #crops the plugin should work on
 allowed-crops:
   - BEETROOTS
@@ -28,16 +28,3 @@ allowed-crops:
   - NETHER_WART
   - POTATOES
   - WHEAT
-
-
-#Lang Options
-prefix: "<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset> "
-toggle-on: "<prefix><green>Scythe functionality toggled on!"
-toggle-off: "<prefix><red>Scythe functionality toggled off!"
-unknown-command: "<red>Unknown Command. Use /scythe help to see commands list."
-config-reload: "<gold>Scythe Config Reloaded!"
-no-permission: "<red>You do not have the required permissions to run this command"
-not-a-player: "Sorry! This command can only be run by a player"
-help-main: "<grey>Scythe allows players to harvest grown crops without needing to replant"
-help-toggle: "<yellow>/scythe toggle \n<grey>• Toggle scythe on or off"
-help-reload: "<yellow>/scythe reload \n<grey>• Reloads config settings"

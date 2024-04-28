@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import simplexity.scythe.Scythe;
 import simplexity.scythe.commands.SubCommand;
-import simplexity.scythe.config.Message;
+import simplexity.scythe.config.LocaleHandler;
 import simplexity.scythe.config.ScythePermission;
 import simplexity.scythe.events.ToggleEvent;
 
@@ -22,18 +22,18 @@ public class ToggleCommand extends SubCommand {
 
     public void execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(miniMessage.deserialize(Message.NOT_A_PLAYER.getMessage()));
+            sender.sendMessage(miniMessage.deserialize(LocaleHandler.getInstance().getNotAPlayer()));
             return;
         }
         if (!((player.hasPermission(ScythePermission.TOGGLE_COMMAND.getPermission())) && player.hasPermission(ScythePermission.USE.getPermission()))) {
-            player.sendMessage(miniMessage.deserialize(Message.NO_PERMISSION.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
+            player.sendMessage(miniMessage.deserialize(LocaleHandler.getInstance().getNoPermission(), Placeholder.parsed("prefix", LocaleHandler.getInstance().getPrefix())));
             return;
         }
         ToggleEvent toggleEvent = new ToggleEvent(player, toggleKey);
         Bukkit.getPluginManager().callEvent(toggleEvent);
         if (toggleEvent.isCancelled()) return;
-        byte toggleState = toggleEvent.getCurrentToggleState();
-        if (toggleState == (byte) 0) {
+        boolean toggleIsEnabled = toggleEvent.getCurrentToggleState();
+        if (toggleIsEnabled) {
             toggleEvent.setDisabled();
             return;
         }
