@@ -54,6 +54,10 @@ public class HarvestEvent extends Event implements Cancellable {
             setCancelled(true);
             return;
         }
+        if (!isRightClick && !isLeftClickReplantEnabled()) {
+            setCancelled(true);
+            return;
+        }
         if (isRightClick && !isRightClickHarvestEnabled()) {
             setCancelled(true);
             return;
@@ -209,6 +213,14 @@ public class HarvestEvent extends Event implements Cancellable {
      */
     public boolean isCropAllowed() {
         return getConfiguredCropList().contains(getCropMaterial());
+    }
+
+    /**
+     * Returns a boolean value that indicates whether normally breaking the crop triggers the harvest event or not.
+     * <br>The method internally gets the ConfigHandler instance and calls its allowLeftClickReplant() method to retrieve the value.
+     */
+    public boolean isLeftClickReplantEnabled() {
+        return ConfigHandler.getInstance().allowLeftClickReplant();
     }
 
     /**

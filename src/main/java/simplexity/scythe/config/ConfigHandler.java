@@ -33,6 +33,7 @@ public class ConfigHandler {
     private final Logger logger = Scythe.getScytheLogger();
     private boolean requireToolReplant;
     private boolean requireToolRightClickHarvest;
+    private boolean leftClickReplant;
     private boolean rightClickHarvest;
     private boolean playSounds;
     private Sound configSound;
@@ -51,6 +52,7 @@ public class ConfigHandler {
         setConfiguredTools();
         checkSound();
         checkParticle();
+        leftClickReplant = config.getBoolean("left-click-replant");
         rightClickHarvest = config.getBoolean("right-click-to-harvest");
         requireToolReplant = config.getBoolean("require-tool-for-replant");
         requireToolRightClickHarvest = config.getBoolean("require-tool-for-right-click-harvest");
@@ -138,6 +140,9 @@ public class ConfigHandler {
         }
     }
 
+    public boolean allowLeftClickReplant() {
+        return leftClickReplant;
+    }
 
     public boolean allowRightClickHarvest() {
         return rightClickHarvest;
