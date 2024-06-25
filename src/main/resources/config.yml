@@ -1,4 +1,5 @@
 #Scythe
+left-click-replant: true
 right-click-to-harvest: true
 require-tool-for-replant: false
 require-tool-for-right-click-harvest: false
