@@ -6,7 +6,7 @@
 
     <groupId>Simplexity</groupId>
     <artifactId>Scythe</artifactId>
-    <version>5.1</version>
+    <version>5.1.1</version>
     <packaging>jar</packaging>
 
     <name>Scythe</name>
@@ -39,6 +39,14 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <paperweight-mappings-namespace>mojang</paperweight-mappings-namespace>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
                             <relocations>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
