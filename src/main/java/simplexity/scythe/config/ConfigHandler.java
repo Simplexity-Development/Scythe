@@ -1,9 +1,6 @@
 package simplexity.scythe.config;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -13,6 +10,7 @@ import simplexity.scythe.Scythe;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -76,7 +74,7 @@ public class ConfigHandler {
     private void checkSound() {
         String sound = Scythe.getInstance().getConfig().getString("sound");
         try {
-            configSound = Sound.valueOf(sound);
+            configSound = Registry.SOUNDS.get(NamespacedKey.fromString(sound.toLowerCase(Locale.ROOT)));
         } catch (IllegalArgumentException | NullPointerException e) {
             Scythe.getScytheLogger().warning(sound + " could not be cast to a sound. Please check your syntax and be sure you are choosing a sound from https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html");
             Scythe.getScytheLogger().warning("Setting sound to BLOCK_CROP_BREAK until a valid sound is provided");
