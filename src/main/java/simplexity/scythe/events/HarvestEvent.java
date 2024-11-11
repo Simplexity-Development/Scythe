@@ -1,10 +1,7 @@
 package simplexity.scythe.events;
 
 import net.coreprotect.CoreProtectAPI;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
@@ -100,7 +97,7 @@ public class HarvestEvent extends Event implements Cancellable {
             setCancelled(true);
             return;
         }
-        block.breakNaturally(usedItem);
+        player.breakBlock(block);
         if (isCoreProtectEnabled()) {
             coreProtectAPI.logRemoval(player.getName(), getCropLocation(), getCropMaterial(), getCropBlockData());
         }
