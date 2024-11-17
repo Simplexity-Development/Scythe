@@ -25,7 +25,7 @@ public class ToggleCommand extends SubCommand {
             sender.sendMessage(miniMessage.deserialize(LocaleHandler.getInstance().getNotAPlayer()));
             return;
         }
-        if (!((player.hasPermission(ScythePermission.TOGGLE_COMMAND.getPermission())) && player.hasPermission(ScythePermission.USE.getPermission()))) {
+        if (!player.hasPermission(ScythePermission.TOGGLE_COMMAND.getPermission())) {
             player.sendMessage(miniMessage.deserialize(LocaleHandler.getInstance().getNoPermission(), Placeholder.parsed("prefix", LocaleHandler.getInstance().getPrefix())));
             return;
         }

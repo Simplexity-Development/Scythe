@@ -1,4 +1,4 @@
-prefix: "<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset>"
+prefix: "<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset> "
 feedback:
   toggle-enabled: "<prefix><green>Scythe functionality enabled!</green>"
   toggle-disabled: "<prefix><grey>Scythe functionality <red>disabled</red>!</grey>"

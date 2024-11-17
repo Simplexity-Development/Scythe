@@ -21,6 +21,8 @@ permissions:
   scythe.toggle:
     description: Allow players to toggle Scythe functionality on or off
     default: op
+    children:
+      - scythe.use
   scythe.reload:
     description: Allows user to reload the Scythe plugin
     default: op

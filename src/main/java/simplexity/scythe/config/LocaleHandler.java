@@ -40,7 +40,7 @@ public class LocaleHandler {
             logger.severe("Issue loading locale.yml");
             e.printStackTrace();
         }
-        prefix = localeConfig.getString("prefix", "<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset>");
+        prefix = localeConfig.getString("prefix", "<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset> ");
         toggleEnabled = localeConfig.getString("feedback.toggle-enabled", "<prefix><green>Scythe functionality enabled!</green>");
         toggleDisabled = localeConfig.getString("feedback.toggle-disabled", "<prefix><grey>Scythe functionality <red>disabled</red>!</grey>");
         configReloaded = localeConfig.getString("feedback.config-reloaded", "<gold>Scythe Config Reloaded!</gold>");
