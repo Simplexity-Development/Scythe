@@ -10,7 +10,6 @@ import org.bukkit.Sound;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.inventory.ItemStack;
 import simplexity.scythe.Scythe;
 
 import java.util.ArrayList;
@@ -35,11 +34,8 @@ public class ConfigHandler {
 
 
     private final Logger logger = Scythe.getScytheLogger();
-    private boolean requireToolReplant;
-    private boolean requireToolRightClickHarvest;
-    private boolean leftClickReplant;
-    private boolean rightClickHarvest;
-    private boolean playSounds;
+    private boolean leftClickReplantRequireTool, rightClickReplantRequireTool, rightClickHarvestRequireTool,
+            leftClickReplant, rightClickHarvest, rightClickReplant, playSounds;
     private Sound configSound;
     private Particle configParticle;
     private float soundVolume;
@@ -47,19 +43,21 @@ public class ConfigHandler {
     private boolean breakParticles;
     private int particleCount;
     private final ArrayList<Material> configuredCrops = new ArrayList<>();
-    private final ArrayList<ItemStack> configuredTools = new ArrayList<>();
+    private final ArrayList<Material> configuredTools = new ArrayList<>();
 
     public void configParser() {
         FileConfiguration config = Scythe.getInstance().getConfig();
-        LocaleHandler.getInstance().loadLocale();
+        LocaleHandler.getInstance().reloadLocale();
         setConfiguredCrops();
         setConfiguredTools();
         checkSound();
         checkParticle();
-        leftClickReplant = config.getBoolean("left-click-replant");
-        rightClickHarvest = config.getBoolean("right-click-to-harvest");
-        requireToolReplant = config.getBoolean("require-tool-for-replant");
-        requireToolRightClickHarvest = config.getBoolean("require-tool-for-right-click-harvest");
+        leftClickReplant = config.getBoolean("left-click.replant.enabled", true);
+        leftClickReplantRequireTool = config.getBoolean("left-click.replant.require-tool", false);
+        rightClickHarvest = config.getBoolean("right-click.harvest.enabled", true);
+        rightClickHarvestRequireTool = config.getBoolean("right-click.harvest.require-tool", false);
+        rightClickReplant = config.getBoolean("right-click.replant.enabled", true);
+        rightClickReplantRequireTool = config.getBoolean("right-click.replant.require-tool", false);
         playSounds = config.getBoolean("play-sounds");
         if (0 < config.getDouble("sound-volume") && config.getDouble("sound-volume") < 2) {
             soundVolume = (float) config.getDouble("sound-volume");
@@ -136,8 +134,12 @@ public class ConfigHandler {
         List<String> stringToolList = Scythe.getInstance().getConfig().getStringList("replant-tools");
         for (String tool : stringToolList) {
             try {
-                ItemStack toolItem = Bukkit.getItemFactory().createItemStack(tool);
-                configuredTools.add(toolItem.asOne());
+                Material material = Material.matchMaterial(tool);
+                if (material == null) {
+                    Scythe.getScytheLogger().warning(tool + " is not a valid material. Please check your syntax");
+                    continue;
+                }
+                configuredTools.add(material);
             } catch (IllegalArgumentException e) {
                 Scythe.getScytheLogger().warning(tool + " could not be cast to an ItemStack. Please make sure your syntax is correct");
             }
@@ -152,12 +154,12 @@ public class ConfigHandler {
         return rightClickHarvest;
     }
 
-    public boolean shouldRequireToolReplant() {
-        return requireToolReplant;
+    public boolean shouldRequireToolLeftClickReplant() {
+        return leftClickReplantRequireTool;
     }
 
-    public boolean shouldRequireToolRightClickHarvest() {
-        return requireToolRightClickHarvest;
+    public boolean shouldRequireToolRightClickReplant() {
+        return rightClickReplantRequireTool;
     }
 
     public boolean showBreakParticles() {
@@ -172,7 +174,7 @@ public class ConfigHandler {
         return Collections.unmodifiableList(configuredCrops);
     }
 
-    public List<ItemStack> getConfiguredTools() {
+    public List<Material> getConfiguredTools() {
         return Collections.unmodifiableList(configuredTools);
     }
 
@@ -194,5 +196,13 @@ public class ConfigHandler {
 
     public int getParticleCount() {
         return particleCount;
+    }
+
+    public boolean isRightClickReplant() {
+        return rightClickReplant;
+    }
+
+    public boolean isRightClickHarvestRequireTool() {
+        return rightClickHarvestRequireTool;
     }
 }

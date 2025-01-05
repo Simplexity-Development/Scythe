@@ -1,15 +1,13 @@
 package simplexity.scythe.commands.subcommands;
 
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import simplexity.scythe.Scythe;
 import simplexity.scythe.commands.SubCommand;
 import simplexity.scythe.config.ConfigHandler;
-import simplexity.scythe.config.LocaleHandler;
+import simplexity.scythe.config.Message;
 import simplexity.scythe.config.ScythePermission;
 
 public class ReloadCommand extends SubCommand {
-    MiniMessage miniMessage = Scythe.getMiniMessage();
 
     public ReloadCommand() {
         super(ScythePermission.RELOAD_COMMAND.getPermission());
@@ -18,11 +16,11 @@ public class ReloadCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (!sender.hasPermission(ScythePermission.RELOAD_COMMAND.getPermission())) {
-            sender.sendMessage(miniMessage.deserialize(LocaleHandler.getInstance().getNoPermission()));
+            sender.sendRichMessage(Message.NO_PERMISSION.getMessage());
             return;
         }
         Scythe.getInstance().reloadConfig();
         ConfigHandler.getInstance().configParser();
-        sender.sendMessage(miniMessage.deserialize(LocaleHandler.getInstance().getConfigReloaded()));
+        sender.sendRichMessage(Message.CONFIG_RELOADED.getMessage());
     }
 }

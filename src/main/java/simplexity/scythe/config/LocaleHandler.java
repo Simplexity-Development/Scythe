@@ -7,88 +7,80 @@ import simplexity.scythe.Scythe;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+@SuppressWarnings({"ResultOfMethodCallIgnored", "CallToPrintStackTrace"})
 public class LocaleHandler {
     private static LocaleHandler instance;
     private final String fileName = "locale.yml";
-    private final File localeFile = new File(Scythe.getInstance().getDataFolder(), fileName);
-    private final FileConfiguration localeConfig = new YamlConfiguration();
-    private final Logger logger = Scythe.getInstance().getLogger();
-    private String prefix, toggleEnabled, toggleDisabled, unknownCommand, configReloaded,
-            noPermission, notAPlayer, helpMain, helpToggle, helpReload;
+    private final File dataFile = new File(Scythe.getInstance().getDataFolder(), fileName);
+    private FileConfiguration locale = new YamlConfiguration();
 
     private LocaleHandler() {
-        if (!localeFile.exists()) {
-            Scythe.getInstance().saveResource(fileName, false);
+        try {
+            dataFile.getParentFile().mkdirs();
+            dataFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        reloadLocale();
     }
 
     public static LocaleHandler getInstance() {
-        if (instance == null) instance = new LocaleHandler();
+        if (instance == null) {
+            instance = new LocaleHandler();
+        }
         return instance;
     }
 
-    public FileConfiguration getLocaleConfig() {
-        return localeConfig;
-    }
-
-    public void loadLocale() {
+    public void reloadLocale() {
         try {
-            localeConfig.load(localeFile);
+            locale.load(dataFile);
         } catch (IOException | InvalidConfigurationException e) {
-            logger.severe("Issue loading locale.yml");
             e.printStackTrace();
         }
-        prefix = localeConfig.getString("prefix", "<gold><bold>[</bold><yellow>Scythe</yellow><bold>]<reset> ");
-        toggleEnabled = localeConfig.getString("feedback.toggle-enabled", "<prefix><green>Scythe functionality enabled!</green>");
-        toggleDisabled = localeConfig.getString("feedback.toggle-disabled", "<prefix><grey>Scythe functionality <red>disabled</red>!</grey>");
-        configReloaded = localeConfig.getString("feedback.config-reloaded", "<gold>Scythe Config Reloaded!</gold>");
-        unknownCommand = localeConfig.getString("errors.unknown-command", "<red>Unknown Command</red>");
-        noPermission = localeConfig.getString("errors.no-permission", "<red>You do not have the required Permission to run this command</red>");
-        notAPlayer = localeConfig.getString("errors.not-a-player", "Sorry! This command can only be run by a player");
-        helpMain = localeConfig.getString("help.main", "<grey>Scythe allows players to harvest grown crops without needing to replant</grey>");
-        helpToggle = localeConfig.getString("help.toggle", "<yellow>/scythe toggle \n<grey>• Toggle scythe on or off</grey></yellow>");
-        helpReload = localeConfig.getString("help.reload", "<yellow>/scythe reload \n<grey>• Reloads config settings</grey></yellow>");
+        populateLocale();
+        sortLocale();
+        saveLocale();
     }
 
-    public String getPrefix() {
-        return prefix;
+
+    private void populateLocale() {
+        Set<Message> missing = new HashSet<>(Arrays.asList(Message.values()));
+        for (Message message : Message.values()) {
+            if (locale.contains(message.getPath())) {
+                message.setMessage(locale.getString(message.getPath()));
+                missing.remove(message);
+            }
+        }
+
+        for (Message message : missing) {
+            locale.set(message.getPath(), message.getMessage());
+        }
+
+
     }
 
-    public String getToggleEnabled() {
-        return toggleEnabled;
+    private void sortLocale() {
+        FileConfiguration newLocale = new YamlConfiguration();
+        List<String> keys = new ArrayList<>(locale.getKeys(true));
+        Collections.sort(keys);
+        for (String key : keys) {
+            newLocale.set(key, locale.getString(key));
+        }
+        locale = newLocale;
     }
 
-    public String getToggleDisabled() {
-        return toggleDisabled;
-    }
-
-    public String getUnknownCommand() {
-        return unknownCommand;
-    }
-
-    public String getConfigReloaded() {
-        return configReloaded;
-    }
-
-    public String getNoPermission() {
-        return noPermission;
-    }
-
-    public String getNotAPlayer() {
-        return notAPlayer;
-    }
-
-    public String getHelpMain() {
-        return helpMain;
-    }
-
-    public String getHelpToggle() {
-        return helpToggle;
-    }
-
-    public String getHelpReload() {
-        return helpReload;
+    private void saveLocale() {
+        try {
+            locale.save(dataFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

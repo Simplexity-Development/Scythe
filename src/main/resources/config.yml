@@ -1,8 +1,15 @@
 #Scythe
-left-click-replant: true
-right-click-to-harvest: true
-require-tool-for-replant: false
-require-tool-for-right-click-harvest: false
+left-click:
+  replant:
+    enabled: true
+    require-tool: false
+right-click:
+  harvest:
+    enabled: true
+    require-tool: false
+  replant:
+    enabled: true
+    require-tool: false
 #Only applies if "require-tool-for-replant" or "require-tool-for-right-click-harvest" is true.
 #These must be declared as you would write them to summon them in vanilla minecraft
 replant-tools:
@@ -12,7 +19,7 @@ replant-tools:
   - "minecraft:golden_hoe"
   - "minecraft:diamond_hoe"
   - "minecraft:netherite_hoe"
-
+replant-tools-item-models: []
 play-sounds: true
 sound: BLOCK_CROP_BREAK
 sound-volume: 1

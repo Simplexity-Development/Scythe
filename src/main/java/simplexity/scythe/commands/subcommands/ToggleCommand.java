@@ -1,19 +1,16 @@
 package simplexity.scythe.commands.subcommands;
 
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import simplexity.scythe.Scythe;
 import simplexity.scythe.commands.SubCommand;
-import simplexity.scythe.config.LocaleHandler;
+import simplexity.scythe.config.Message;
 import simplexity.scythe.config.ScythePermission;
 import simplexity.scythe.events.ToggleEvent;
 
 public class ToggleCommand extends SubCommand {
-    private static final MiniMessage miniMessage = Scythe.getMiniMessage();
     public static final NamespacedKey toggleKey = new NamespacedKey(Scythe.getInstance(), "functiontoggle");
 
     public ToggleCommand() {
@@ -22,11 +19,11 @@ public class ToggleCommand extends SubCommand {
 
     public void execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(miniMessage.deserialize(LocaleHandler.getInstance().getNotAPlayer()));
+            sender.sendRichMessage(Message.NOT_A_PLAYER.getMessage());
             return;
         }
         if (!player.hasPermission(ScythePermission.TOGGLE_COMMAND.getPermission())) {
-            player.sendMessage(miniMessage.deserialize(LocaleHandler.getInstance().getNoPermission(), Placeholder.parsed("prefix", LocaleHandler.getInstance().getPrefix())));
+            player.sendRichMessage(Message.NO_PERMISSION.getMessage());
             return;
         }
         ToggleEvent toggleEvent = new ToggleEvent(player, toggleKey);

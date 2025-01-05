@@ -9,7 +9,7 @@ import simplexity.scythe.commands.subcommands.HelpCommand;
 import simplexity.scythe.commands.subcommands.ReloadCommand;
 import simplexity.scythe.commands.subcommands.ToggleCommand;
 import simplexity.scythe.config.ConfigHandler;
-import simplexity.scythe.interactions.InteractListener;
+import simplexity.scythe.listeners.InteractListener;
 
 import java.util.Objects;
 import java.util.logging.Logger;
