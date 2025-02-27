@@ -9,67 +9,55 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 import simplexity.scythe.events.HarvestEvent;
 import simplexity.scythe.events.ReplantEvent;
-import simplexity.scythe.handling.HarvestHandler;
-import simplexity.scythe.handling.ReplantHandler;
+import simplexity.scythe.handling.CropManager;
 
 public class InteractListener implements Listener {
 
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void playerHarvest(PlayerInteractEvent event) {
+    public void playerInteract(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null) return;
         if (event.getHand() == null) return;
         if (event.getHand().equals(EquipmentSlot.OFF_HAND)) return;
-
-        BlockData replantBlockData = event.getClickedBlock().getBlockData();
+        CropManager cropManager = CropManager.getInstance();
         boolean rightClick = event.getAction().isRightClick();
         Block block = event.getClickedBlock();
         Player player = event.getPlayer();
-
-        if (!harvestCrop(event, player, block, rightClick)) return;
-
-        replantCrop(player, block, replantBlockData, rightClick);
-
-
-    }
-
-    private boolean harvestCrop(PlayerInteractEvent event, Player player, Block block, boolean rightClick) {
-        if (!HarvestHandler.getInstance().passesPreHarvestChecks(player, block, rightClick)) return false;
-
-
+        if (!cropManager.canHarvest(player, block, rightClick)) return;
         HarvestEvent harvestEvent = runHarvestEvent(player, block, rightClick);
-        if (harvestEvent == null) return false;
-
-        HarvestHandler.getInstance().harvestCrop(player, block);
-
+        if (harvestEvent == null) return;
+        BlockData replantBlockData = event.getClickedBlock().getBlockData();
+        cropManager.harvestCrop(
+                harvestEvent.getPlayer(),
+                harvestEvent.getBlock(),
+                harvestEvent.isRightClick());
         event.setCancelled(true);
-        return true;
+        if (!cropManager.canReplant(player, replantBlockData, rightClick)) return;
+        ReplantEvent replantEvent = runReplantEvent(player, block, replantBlockData, rightClick);
+        if (replantEvent == null) return;
+        cropManager.replantCrop(
+                replantEvent.getPlayer(),
+                replantEvent.getBlock(),
+                replantEvent.getBlockData(),
+                replantEvent.isRightClick());
     }
 
     private HarvestEvent runHarvestEvent(Player player, Block block, boolean rightClick) {
-        ItemStack itemUsed = player.getInventory().getItemInMainHand();
-        HarvestEvent harvestEvent = new HarvestEvent(player, block, rightClick, itemUsed);
+        HarvestEvent harvestEvent = new HarvestEvent(player, block, rightClick);
         Bukkit.getPluginManager().callEvent(harvestEvent);
         if (harvestEvent.isCancelled()) return null;
         return harvestEvent;
     }
 
-    private void replantCrop(Player player, Block block, BlockData blockData, boolean rightClick) {
-        if (!ReplantHandler.getInstance().passesPreChecks(player, rightClick)) return;
-        ReplantEvent replantEvent = runReplantEvent(player, block, blockData);
-        if (replantEvent == null) return;
-        ReplantHandler.getInstance().replantCrop(block, blockData, player);
-    }
-
-    private ReplantEvent runReplantEvent(Player player, Block block, BlockData originalBlockData) {
-        ReplantEvent replantEvent = new ReplantEvent(player, block, originalBlockData);
+    private ReplantEvent runReplantEvent(Player player, Block block, BlockData originalBlockData, boolean rightClick) {
+        ReplantEvent replantEvent = new ReplantEvent(player, block, originalBlockData, rightClick);
         Bukkit.getPluginManager().callEvent(replantEvent);
         if (replantEvent.isCancelled()) return null;
         return replantEvent;
     }
+
 }
 
 

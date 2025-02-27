@@ -14,8 +14,10 @@ import simplexity.scythe.Scythe;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -34,16 +36,19 @@ public class ConfigHandler {
 
 
     private final Logger logger = Scythe.getScytheLogger();
-    private boolean leftClickReplantRequireTool, rightClickReplantRequireTool, rightClickHarvestRequireTool,
-            leftClickReplant, rightClickHarvest, rightClickReplant, playSounds;
+    private boolean harvestUseDurability, leftClickReplantRequireSeeds, leftClickReplantRequireTool,
+            rightClickReplantRequireSeeds, rightClickReplantRequireTool,
+            rightClickHarvestRequireTool,
+            leftClickReplant, rightClickHarvest, rightClickReplant, playSounds, preventToolBreak;
     private Sound configSound;
     private Particle configParticle;
     private float soundVolume;
     private float soundPitch;
     private boolean breakParticles;
-    private int particleCount;
+    private int particleCount, minimumDurability;
     private final ArrayList<Material> configuredCrops = new ArrayList<>();
     private final ArrayList<Material> configuredTools = new ArrayList<>();
+    private final HashSet<NamespacedKey> itemModels = new HashSet<>();
 
     public void configParser() {
         FileConfiguration config = Scythe.getInstance().getConfig();
@@ -52,12 +57,18 @@ public class ConfigHandler {
         setConfiguredTools();
         checkSound();
         checkParticle();
+        verifyItemModels();
         leftClickReplant = config.getBoolean("left-click.replant.enabled", true);
         leftClickReplantRequireTool = config.getBoolean("left-click.replant.require-tool", false);
+        leftClickReplantRequireSeeds = config.getBoolean("left-click.replant.require-seeds", false);
         rightClickHarvest = config.getBoolean("right-click.harvest.enabled", true);
         rightClickHarvestRequireTool = config.getBoolean("right-click.harvest.require-tool", false);
         rightClickReplant = config.getBoolean("right-click.replant.enabled", true);
         rightClickReplantRequireTool = config.getBoolean("right-click.replant.require-tool", false);
+        rightClickReplantRequireSeeds = config.getBoolean("right-click.replant.require-seeds", false);
+        harvestUseDurability = config.getBoolean("tools.harvest-uses-durability", false);
+        preventToolBreak = config.getBoolean("tools.prevent-tool-break", true);
+        minimumDurability = config.getInt("tools.minimum-durability", 10);
         playSounds = config.getBoolean("play-sounds");
         if (0 < config.getDouble("sound-volume") && config.getDouble("sound-volume") < 2) {
             soundVolume = (float) config.getDouble("sound-volume");
@@ -96,6 +107,21 @@ public class ConfigHandler {
             configParticle = Particle.CRIT;
         }
 
+    }
+
+    private void verifyItemModels() {
+        itemModels.clear();
+        List<String> itemModelStrings = Scythe.getInstance().getConfig().getStringList("replant-tools-item-models");
+        if (itemModelStrings.isEmpty()) return;
+        for (String itemModel : itemModelStrings) {
+            String[] split = itemModel.split(":");
+            if (split.length != 2) {
+                logger.warning(itemModel + " is not a valid item model, these must be declared as \"namespace:location\", please check your syntax");
+                continue;
+            }
+            NamespacedKey key = new NamespacedKey(split[0], split[1]);
+            itemModels.add(key);
+        }
     }
 
 
@@ -178,6 +204,10 @@ public class ConfigHandler {
         return Collections.unmodifiableList(configuredTools);
     }
 
+    public Set<NamespacedKey> getItemModels() {
+        return Collections.unmodifiableSet(itemModels);
+    }
+
     public Sound getConfigSound() {
         return configSound;
     }
@@ -198,11 +228,31 @@ public class ConfigHandler {
         return particleCount;
     }
 
-    public boolean isRightClickReplant() {
+    public boolean allowRightClickReplant() {
         return rightClickReplant;
     }
 
-    public boolean isRightClickHarvestRequireTool() {
+    public boolean doesRightClickHarvestRequireTool() {
         return rightClickHarvestRequireTool;
+    }
+
+    public boolean doesLeftClickReplantRequireSeeds() {
+        return leftClickReplantRequireSeeds;
+    }
+
+    public boolean doesRightClickReplantRequireSeeds() {
+        return rightClickReplantRequireSeeds;
+    }
+
+    public boolean doesHarvestUseDurability() {
+        return harvestUseDurability;
+    }
+
+    public boolean shouldPreventToolBreak() {
+        return preventToolBreak;
+    }
+
+    public int getMinimumDurability() {
+        return minimumDurability;
     }
 }

@@ -38,6 +38,8 @@ public final class Scythe extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("scythe")).setExecutor(new CommandHandler());
         this.getServer().getPluginManager().registerEvents(new InteractListener(), this);
         this.saveDefaultConfig();
+        getConfig().options().copyDefaults(true);
+        saveConfig();
         ConfigHandler.getInstance().configParser();
         registerCommands();
     }
