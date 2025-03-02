@@ -40,8 +40,7 @@ public class InteractListener implements Listener {
         cropManager.replantCrop(
                 replantEvent.getPlayer(),
                 replantEvent.getBlock(),
-                replantEvent.getBlockData(),
-                replantEvent.isRightClick());
+                replantEvent.getBlockData());
     }
 
     private HarvestEvent runHarvestEvent(Player player, Block block, boolean rightClick) {

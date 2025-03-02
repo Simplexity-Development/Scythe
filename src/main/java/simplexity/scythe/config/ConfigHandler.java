@@ -36,14 +36,13 @@ public class ConfigHandler {
 
 
     private final Logger logger = Scythe.getScytheLogger();
-    private boolean harvestUseDurability, leftClickReplantRequireSeeds, leftClickReplantRequireTool,
-            rightClickReplantRequireSeeds, rightClickReplantRequireTool,
-            rightClickHarvestRequireTool,
-            leftClickReplant, rightClickHarvest, rightClickReplant, playSounds, preventToolBreak;
+    private boolean harvestUseDurability, replantRequiresSeeds, leftClickReplantRequireTool,
+            rightClickReplantRequireTool, rightClickHarvestRequireTool, leftClickReplant, rightClickHarvest,
+            rightClickReplant, playSounds, preventToolBreak;
     private Sound configSound;
     private Particle configParticle;
-    private float soundVolume;
-    private float soundPitch;
+    private float soundVolume, soundPitch;
+    private double particleSpread;
     private boolean breakParticles;
     private int particleCount, minimumDurability;
     private final ArrayList<Material> configuredCrops = new ArrayList<>();
@@ -60,12 +59,11 @@ public class ConfigHandler {
         verifyItemModels();
         leftClickReplant = config.getBoolean("left-click.replant.enabled", true);
         leftClickReplantRequireTool = config.getBoolean("left-click.replant.require-tool", false);
-        leftClickReplantRequireSeeds = config.getBoolean("left-click.replant.require-seeds", false);
         rightClickHarvest = config.getBoolean("right-click.harvest.enabled", true);
         rightClickHarvestRequireTool = config.getBoolean("right-click.harvest.require-tool", false);
         rightClickReplant = config.getBoolean("right-click.replant.enabled", true);
-        rightClickReplantRequireTool = config.getBoolean("right-click.replant.require-tool", false);
-        rightClickReplantRequireSeeds = config.getBoolean("right-click.replant.require-seeds", false);
+        rightClickReplantRequireTool = config.getBoolean("right-click.replant.require-tool", false);;
+        replantRequiresSeeds = config.getBoolean("replant.require-seeds", false);
         harvestUseDurability = config.getBoolean("tools.harvest-uses-durability", false);
         preventToolBreak = config.getBoolean("tools.prevent-tool-break", true);
         minimumDurability = config.getInt("tools.minimum-durability", 10);
@@ -82,14 +80,15 @@ public class ConfigHandler {
             logger.warning("Configured of " + config.getDouble("sound-pitch") + " was unable to be set. Please be sure you've chosen a number between 0 and 2");
             soundPitch  = 1f;
         }
-        breakParticles = config.getBoolean("break-particles");
-        particleCount = config.getInt("particle-count");
+        breakParticles = config.getBoolean("break-particles", true);
+        particleCount = config.getInt("particle-count", 20);
+        particleSpread = config.getDouble("particle-spread", 0.5);
     }
 
     private void checkSound() {
         String sound = Scythe.getInstance().getConfig().getString("sound");
         try {
-            configSound = Registry.SOUNDS.get(NamespacedKey.fromString(sound.toLowerCase(Locale.ROOT)));
+            configSound = Sound.valueOf(sound);
         } catch (IllegalArgumentException | NullPointerException e) {
             Scythe.getScytheLogger().warning(sound + " could not be cast to a sound. Please check your syntax and be sure you are choosing a sound from https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html");
             Scythe.getScytheLogger().warning("Setting sound to BLOCK_CROP_BREAK until a valid sound is provided");
@@ -180,11 +179,11 @@ public class ConfigHandler {
         return rightClickHarvest;
     }
 
-    public boolean shouldRequireToolLeftClickReplant() {
+    public boolean leftClickReplantRequiresTool() {
         return leftClickReplantRequireTool;
     }
 
-    public boolean shouldRequireToolRightClickReplant() {
+    public boolean rightClickReplantRequiresTool() {
         return rightClickReplantRequireTool;
     }
 
@@ -232,27 +231,27 @@ public class ConfigHandler {
         return rightClickReplant;
     }
 
-    public boolean doesRightClickHarvestRequireTool() {
+    public boolean rightClickHarvestRequiresTool() {
         return rightClickHarvestRequireTool;
     }
 
-    public boolean doesLeftClickReplantRequireSeeds() {
-        return leftClickReplantRequireSeeds;
+    public boolean replantRequiresSeeds() {
+        return replantRequiresSeeds;
     }
 
-    public boolean doesRightClickReplantRequireSeeds() {
-        return rightClickReplantRequireSeeds;
-    }
-
-    public boolean doesHarvestUseDurability() {
+    public boolean harvestUsesDurability() {
         return harvestUseDurability;
     }
 
-    public boolean shouldPreventToolBreak() {
+    public boolean preventToolBreaking() {
         return preventToolBreak;
     }
 
     public int getMinimumDurability() {
         return minimumDurability;
+    }
+
+    public double getParticleSpread() {
+        return particleSpread;
     }
 }

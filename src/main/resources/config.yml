@@ -3,7 +3,6 @@ left-click:
   replant:
     enabled: true
     require-tool: false
-    require-seeds: false
 right-click:
   harvest:
     enabled: true
@@ -11,7 +10,8 @@ right-click:
   replant:
     enabled: true
     require-tool: false
-    require-seeds: false
+replant:
+  require-seeds: false
 #Only applies if "require-tool" is true in any of the above categories
 tools:
   # Note: In vanilla, harvesting normally crops does NOT use durability
@@ -35,6 +35,8 @@ break-particles: true
 #Please choose a particle from this list: https://jd.papermc.io/paper/1.20/org/bukkit/Particle.html
 particle: CRIT
 particle-count: 4
+# how far from the center particles should go
+particle-spread: 0.5
 #crops the plugin should work on
 allowed-crops:
   - BEETROOTS

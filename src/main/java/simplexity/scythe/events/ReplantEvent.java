@@ -17,7 +17,7 @@ public class ReplantEvent extends Event implements Cancellable {
     private Player player;
     private Block block;
     private BlockData blockData;
-    private boolean rightClick;
+    private final boolean rightClick;
 
     private static final HandlerList handlerList = new HandlerList();
 
@@ -64,14 +64,6 @@ public class ReplantEvent extends Event implements Cancellable {
         return rightClick;
     }
 
-    /**
-     * Sets whether this event should be run as by someone right-clicking or not
-     *
-     * @param rightClick boolean
-     */
-    public void setRightClick(boolean rightClick) {
-        this.rightClick = rightClick;
-    }
 
     /**
      * Sets the block data that the replanted block will be based off of. This will set the information that
