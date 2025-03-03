@@ -11,26 +11,85 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Called when a crop is replanted
  */
-
+@SuppressWarnings("unused")
 public class ReplantEvent extends Event implements Cancellable {
     private boolean cancelled;
-    private final Player player;
-    private final Block block;
-    private final BlockData originialBlockData;
+    private Player player;
+    private Block block;
+    private BlockData blockData;
+
     private static final HandlerList handlerList = new HandlerList();
 
-    public ReplantEvent(Player player, Block block, BlockData originialBlockData) {
+    public ReplantEvent(Player player, Block block, BlockData blockData) {
         this.player = player;
         this.block = block;
-        this.originialBlockData = originialBlockData;
+        this.blockData = blockData;
     }
+
+    /**
+     * Returns the original BlockData for the block before replanting.
+     *
+     * @return BlockData
+     */
+    public BlockData getBlockData() {
+        return blockData;
+    }
+
+    /**
+     * Gets the player involved in this event
+     *
+     * @return Player
+     */
+    public Player getPlayer() {
+        return player;
+    }
+
+    /**
+     * Gets the block that will be replanted
+     *
+     * @return Block
+     */
+    public Block getBlock() {
+        return block;
+    }
+
+
+    /**
+     * Sets the block data that the replanted block will be based off of. This will set the information that
+     * the new block will be. This does not adjust the logic before the block is broken, that is in HarvestEvent
+     *
+     * @param blockData BlockData
+     */
+
+    public void setBlockData(BlockData blockData) {
+        this.blockData = blockData;
+    }
+
+    /**
+     * Set the player connected to this event, the player that will be tracked in CoreProtect and have items
+     * removed from their inventory
+     *
+     * @param player Player
+     */
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    /**
+     * Set the block that will be replanted, used for location
+     *
+     * @param block Block
+     */
+    public void setBlock(Block block) {
+        this.block = block;
+    }
+
 
     /**
      * Returns the handler list for the PlantEvent.
      *
      * @return HandlerList
      */
-    @SuppressWarnings("unused") //API method - not used internally
     public static HandlerList getHandlerList() {
         return handlerList;
     }
@@ -67,21 +126,4 @@ public class ReplantEvent extends Event implements Cancellable {
         cancelled = cancel;
     }
 
-
-    /**
-     * Returns the original BlockData for the block before replanting.
-     *
-     * @return BlockData
-     */
-    public BlockData getOriginialBlockData() {
-        return originialBlockData;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public Block getBlock() {
-        return block;
-    }
 }

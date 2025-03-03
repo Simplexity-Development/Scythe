@@ -6,7 +6,7 @@
 
     <groupId>Simplexity</groupId>
     <artifactId>Scythe</artifactId>
-    <version>5.2.1</version>
+    <version>6.0.0</version>
     <packaging>jar</packaging>
 
     <name>Scythe</name>

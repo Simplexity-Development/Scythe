@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,19 +12,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public class HarvestEvent extends Event implements Cancellable {
     private boolean cancelled;
-    private final Player player;
-    private final Block block;
-    private final ItemStack usedItem;
-    private final boolean isRightClick;
+    private Player player;
+    private Block block;
 
 
     private static final HandlerList handlerList = new HandlerList();
 
-    public HarvestEvent(Player player, Block block, boolean isRightClick, ItemStack usedItem) {
+    public HarvestEvent(Player player, Block block) {
         this.player = player;
         this.block = block;
-        this.isRightClick = isRightClick;
-        this.usedItem = usedItem;
     }
 
 
@@ -58,7 +53,7 @@ public class HarvestEvent extends Event implements Cancellable {
      *
      * @return HandlerList
      */
-    @SuppressWarnings("unused") //API method - not used internally
+
     public static HandlerList getHandlerList() {
         return handlerList;
     }
@@ -80,7 +75,7 @@ public class HarvestEvent extends Event implements Cancellable {
      *
      * @return Player
      */
-    @SuppressWarnings("unused") //API method - not used internally
+
     public Player getPlayer() {
         return player;
     }
@@ -90,32 +85,28 @@ public class HarvestEvent extends Event implements Cancellable {
      *
      * @return Block
      */
-    @SuppressWarnings("unused") //API method - not used internally
+
     public Block getBlock() {
         return block;
     }
 
     /**
-     * Returns a boolean value that indicates whether the interaction was a right-click action.
-     * <br>The method returns the value of the "isRightClick" boolean field, which is set by the calling code to indicate whether the interaction was a right-click action or not.
-     * <br>If the value is true, it means that the interaction was a right-click action; otherwise, it was not.
+     * Sets the block this event will run on
      *
-     * @return boolean
+     * @param block Block
      */
-    @SuppressWarnings("unused") //API method - not used internally
-    public boolean isRightClick() {
-        return isRightClick;
+
+    public void setBlock(Block block) {
+        this.block = block;
     }
 
     /**
-     * Returns an ItemStack object that represents the item used during interaction.
-     * <br>The method returns the value of the "usedItem" field, which is set by the calling code to represent the item used during interaction.
-     * <br>The ItemStack object encapsulates the item's information, such as its type, count and metadata.
+     * Sets the player that this event will involve and track with coreprotect
      *
-     * @return ItemStack
+     * @param player Player
      */
-    @SuppressWarnings("unused") //API method - not used internally
-    public ItemStack getUsedItem() {
-        return usedItem;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
+
 }

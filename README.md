@@ -14,7 +14,8 @@
 
 ### Commands
 
-* `/scythe toggle`: Toggles the automatic replanting and right-click harvesting feature for the player who executed the command. This requires the `scythe.toggle` permission. 
+* `/scythe toggle`: Toggles the automatic replanting and right-click harvesting feature for the player who executed the
+  command. This requires the `scythe.toggle` permission.
 * `/scythe reload`: Reloads the configuration for the plugin. This requires the `scythe.reload` permission.
 
 ### Permissions
@@ -25,49 +26,122 @@
 * `scythe.toggle` : Allows the player to toggle the feature for themselves using the /scythe toggle command.
 * `scythe.reload` : Allows the player to reload the configuration using the /scythe reload command.
 
-### Configuration Options
+## Config
 
-* `right-click-to-harvest` : (Boolean) Allows right-click harvesting. 
-* `require-tool-for-replant` : (Boolean) Requires a tool in order for crops to automatically replant (configured below)
-* `require-tool-for-right-click-harvest` : (Boolean) Requires a tool for right click harvest, requires `right-click-harvest` to be true
-* `replant-tools` : (String list) List of tools allowed to be used. Only used if `require-tool-for-replant` or `require-tool-for-right-click-harvest` is set to `true`. These must be declared as they would be written in a vanilla `/give` command
-* `play-sounds` (Boolean): If set to true, sounds will be played to emulate blocks breaking when right-clicking to harvest crops. If set to false, no sounds will be played.
-* `sound` : (String) Should be taken from [The Sound Enum](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html)
-* `sound-volume` : (float) The volume the sound should be played at
-* `sound-pitch` : (float) The pitch the sound should be played at
-* `break-particles`: (Boolean) If set to true, particles will be displayed to emulate blocks breaking when right-clicking to harvest crops. If set to false, no particles will be displayed.
-* `particle` : (String) The particle to be shown, should be taken from [The Particle Enum](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Particle.html)
-* `particle-count` : (int) The number of particles to play
-* `crops` (String list): A whitelist of crops that this plugin should work on. Any crops not on this list will not be affected by the plugin.
+Note, generated config does not have this many comments lol, this is just for the README/description
 
-### Installation
-
-1. Download the latest release of the Scythe plugin from the releases page.
-2. Place the plugin jar file in the plugins folder of your Minecraft server.
-3. Start the server and wait for the plugin to be enabled.
-4. Edit the configuration file located in the plugins/Scythe folder to your liking.
-5. Restart the server for the changes to take effect.
+```yml
+#Scythe
+auto-replant:
+  enabled: true # Should crops automatically be replanted?
+  require-seeds: false # Should the user be required to have seeds in their inventory? Note: will consume seeds
+  require-tool: false # Should the user be required to use a specific tool?
+  delay-ticks: 1 # How long in ticks after breaking the block should it be replanted? (20 ticks per second, without lag)
+right-click-harvest:
+  enabled: true # Should users be able to right-click to harvest blocks?
+  require-tool: false # Should users be required to use a specific tool?
+#Only applies if "require-tool" is true in any of the above categories
+tools:
+  enabled-tools: # If users are required to use a specific tool, which tools are valid?
+    - "minecraft:wooden_hoe"
+    - "minecraft:stone_hoe"
+    - "minecraft:iron_hoe"
+    - "minecraft:golden_hoe"
+    - "minecraft:diamond_hoe"
+    - "minecraft:netherite_hoe"
+  # Item models should be declared like "namespace:id"
+  required-item-models: [ ] # Do you have any specific item models you're using on tools that make them look different? If so, declare them here
+  # Note: In vanilla, harvesting normally crops does NOT use durability.
+  # This will cause the tool to lose durability on right-click harvest ONLY
+  durability:
+    harvest-uses-durability: false # Should right-click-harvest make tool durability go down?
+    replant-uses-durability: false # Should auto-replant make tool durability go down?
+    prevent-tool-break: true # If either of the two above are set to 'true', do you want to prevent the plugin from working if a tool is low on durability, to prevent users from accidentally breaking their tools?
+    minimum-durability: 10 # If the above is set to true, how low should durability be when the plugin stops working?
+# Please choose a sound from this list: https://jd.papermc.io/paper/1.21.4/org/bukkit/Sound.html
+sounds:
+  enabled: true # Should sounds be played when a user breaks or auto-replants a crop?
+  break-sound: BLOCK_CROP_BREAK # Which sound should be played when a crop is broken?
+  plant-sound: ITEM_CROP_PLANT # Which sound should be played when a crop is replanted?
+  # between 0 and 2
+  volume: 1.0 # How loud should it be?
+  # between 0 and 2
+  pitch: 1.0 # How high-pitched should it be?
+# Please choose a particle from this list: https://jd.papermc.io/paper/1.20/org/bukkit/Particle.html
+particles:
+  harvest:
+    enabled: true # Should particles show when a user right-click-harvests a block?
+    particle: BLOCK # Which particle should show?
+    count: 40 # How many particles should spawn? This will wildly depend on the selected particle
+    # how far from the center particles should go, in blocks
+    spread: 0.5
+  replant:
+    enabled: true  # Should particles show when a block is auto-replanted?
+    particle: HAPPY_VILLAGER # Which particle should show?
+    count: 2 # How many particles should spawn? This will wildly depend on the selected particle
+    spread: 0.5 # how far from the center should particles go, in blocks
+# Crops the plugin should work on, list of materials is here: https://jd.papermc.io/paper/1.21.4/org/bukkit/Material.html
+# Note, the material must have the BlockData of 'Ageable' - note, most other ageable blocks in the list don't work as intended.
+allowed-crops:
+  - BEETROOTS
+  - CARROTS
+  - COCOA
+  - NETHER_WART
+  - POTATOES
+  - WHEAT
+  # - PUMPKIN_STEM
+  # - MELON_STEM
+```
 
 ## API
 
-### [Javadocs](https://simplexity-development.github.io/Scythe/index.html)
+### HarvestEvent - Cancellable
+
+| Method                  | Returns       | Description                                   |
+|-------------------------|---------------|-----------------------------------------------|
+| `getPlayer()`           | `Player`      | Returns the player who triggered the harvest. |
+| `getBlock()`            | `Block`       | Returns the crop block being harvested.       |
+| `isCancelled()`         | `boolean`     | Checks if the event is cancelled.             |
+| `setPlayer(Player)`     | `void`        | Updates the player associated with the event. |
+| `setBlock(Block)`       | `void`        | Updates the block involved in the event.      |
+| `setCancelled(boolean)` | `void`        | Cancels or un-cancels the event.              |
+| `getHandlers()`         | `HandlerList` | Bukkit-required handler method.               |
+| `getHandlerList()`      | `HandlerList` | Bukkit-required static handler method.        |
+
+### ReplantEvent - Cancellable
+
+| Method                    | Returns       | Description                                                 |
+|---------------------------|---------------|-------------------------------------------------------------|
+| `getPlayer()`             | `Player`      | Returns the player who triggered the replanting.            |
+| `getBlock()`              | `Block`       | Returns the block being replanted.                          |
+| `getBlockData()`          | `BlockData`   | Returns the BlockData being applied to the replanted block. |
+| `isCancelled()`           | `boolean`     | Checks if the event is cancelled.                           |
+| `setPlayer(Player)`       | `void`        | Updates the player associated with the event.               |
+| `setBlock(Block)`         | `void`        | Updates the block involved in the event.                    |
+| `setBlockData(BlockData)` | `void`        | Updates the BlockData for the replanted block.              |
+| `setCancelled(boolean)`   | `void`        | Cancels or un-cancels the event.                            |
+| `getHandlers()`           | `HandlerList` | Bukkit-required handler method.                             |
+| `getHandlerList()`        | `HandlerList` | Bukkit-required static handler method.                      |
 
 ### Maven
+
 ```xml
+
 <repository>
-  <id>modrinth-repo</id>
-  <url>https://api.modrinth.com/maven/</url>
+    <id>modrinth-repo</id>
+    <url>https://api.modrinth.com/maven/</url>
 </repository>
 
 <dependency>
-  <groupId>maven.modrinth</groupId>
-  <artifactId>scythe</artifactId>
-  <version>4.0</version>
-  <scope>provided</scope>
+<groupId>maven.modrinth</groupId>
+<artifactId>scythe</artifactId>
+<version>4.0</version>
+<scope>provided</scope>
 </dependency>
 ```
 
 ### Gradle
+
 ```gradle
 exclusiveContent {
     forRepository { maven { url = "https://api.modrinth.com/maven" } }
@@ -81,7 +155,8 @@ dependencies {
 
 ### Support
 
-If you need any help with the Scythe plugin, please open an issue on the GitHub repository or join our [Discord server](https://discord.gg/qe3YQrbegA) for support.
+If you need any help with the Scythe plugin, please open an issue on the GitHub repository or join
+our [Discord server](https://discord.gg/qe3YQrbegA) for support.
 
 ### License
 

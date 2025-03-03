@@ -6,6 +6,8 @@ public enum Message {
     TOGGLE_DISABLED("feedback.toggle-disabled", "<prefix><grey>Scythe functionality <red>disabled</red>!</grey>"),
     CONFIG_RELOADED("feedback.config-reloaded", "<gold>Scythe Config Reloaded!</gold>"),
     UNKNOWN_COMMAND("errors.unknown-command", "<red>Unknown Command</red>"),
+    YOUR_TOOL_IS_ALMOST_BROKEN("errors.tool-nearly-broken", "<red>Your tool is nearly broken, scythe functionality disabled until tool is repaired"),
+    MUST_HOLD_TOOL("errors.must-hold-tool", "<red>You must be holding a valid tool to be able to automatically replant"),
     NO_PERMISSION("errors.no-permission", "<red>You do not have the required Permission to run this command</red>"),
     NOT_A_PLAYER("errors.not-a-player", "Sorry! This command can only be run by a player"),
     HELP_MAIN("help.main", "<grey>Scythe allows players to harvest grown crops without needing to replant</grey>"),
@@ -15,7 +17,7 @@ public enum Message {
     private final String path;
     private String message;
 
-    private Message(String path, String message) {
+    Message(String path, String message) {
         this.path = path;
         this.message = message;
     }
