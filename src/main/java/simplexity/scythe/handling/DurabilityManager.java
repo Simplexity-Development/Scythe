@@ -3,7 +3,9 @@ package simplexity.scythe.handling;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.EntityEffect;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -44,7 +46,7 @@ public class DurabilityManager {
             }
             return false;
         }
-        removeDurability(item);
+        removeDurability(item, player);
         return true;
     }
 
@@ -57,9 +59,13 @@ public class DurabilityManager {
         return (maxDamage - currentDamage) > ConfigHandler.getInstance().getMinimumDurability();
     }
 
-    public void removeDurability(ItemStack item) {
+    public void removeDurability(ItemStack item, Player player) {
         int currentDamage = item.getData(DataComponentTypes.DAMAGE);
-        item.setData(DataComponentTypes.DAMAGE, currentDamage + 1);
+        int maxDamage = item.getData(DataComponentTypes.MAX_DAMAGE);
+        if (maxDamage - currentDamage <= 1) {
+           player.sendEntityEffect(EntityEffect.BREAK_EQUIPMENT_MAIN_HAND, player);
+        }
+        item.damage(1, player);
     }
 
 
