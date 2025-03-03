@@ -194,7 +194,7 @@ public class ConfigHandler {
 
     private void setConfiguredTools(FileConfiguration config) {
         enabledTools.clear();
-        List<String> stringToolList = config.getStringList("replant-tools");
+        List<String> stringToolList = config.getStringList("tools.enabled-tools");
         for (String tool : stringToolList) {
             try {
                 Material material = Material.matchMaterial(tool);

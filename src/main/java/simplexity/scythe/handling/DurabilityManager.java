@@ -1,6 +1,7 @@
 package simplexity.scythe.handling;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -25,14 +26,20 @@ public class DurabilityManager {
     }
 
     private final NamespacedKey beenNotified = new NamespacedKey(Scythe.getInstance(), "durability-notif");
+    private final MiniMessage miniMessage = Scythe.getMiniMessage();
 
     public boolean durabilitySuccessfullyRemoved(Player player) {
         ItemStack item = player.getInventory().getItemInMainHand();
+        if (!Util.getInstance().requiredToolUsed(player)) {
+            if (!hasBeenNotified(player)) {
+                notifyPlayer(player, Message.MUST_HOLD_TOOL.getMessage());
+                return false;
+            }
+            return false;
+        }
         if (!toolHasEnoughDurability(item)) {
             if (!hasBeenNotified(player)) {
-                player.sendMessage(Scythe.getMiniMessage().deserialize(Message.YOUR_TOOL_IS_ALMOST_BROKEN.getMessage()));
-                setNowNotified(player);
-                scheduleFlagRemoval(player);
+                notifyPlayer(player, Message.YOUR_TOOL_IS_ALMOST_BROKEN.getMessage());
                 return false;
             }
             return false;
@@ -55,8 +62,20 @@ public class DurabilityManager {
         item.setData(DataComponentTypes.DAMAGE, currentDamage + 1);
     }
 
+
+    private void notifyPlayer(Player player, String message){
+        player.sendMessage(miniMessage.deserialize(message));
+        player.getPersistentDataContainer().set(beenNotified, PersistentDataType.BOOLEAN, Boolean.TRUE);
+        scheduleFlagRemoval(player);
+    }
+
+    public boolean hasBeenNotified(Player player) {
+        PersistentDataContainer playerPDC = player.getPersistentDataContainer();
+        return playerPDC.getOrDefault(beenNotified, PersistentDataType.BOOLEAN, Boolean.FALSE);
+    }
+
     private void scheduleFlagRemoval(Player player){
-        Bukkit.getScheduler().runTaskLater(Scythe.getInstance(), () ->{
+        Bukkit.getScheduler().runTaskLater(Scythe.getInstance(), () -> {
             removeNotifyFlag(player);
         }, 100);
     }
@@ -65,12 +84,4 @@ public class DurabilityManager {
         player.getPersistentDataContainer().set(beenNotified, PersistentDataType.BOOLEAN, Boolean.FALSE);
     }
 
-    private void setNowNotified(Player player){
-        player.getPersistentDataContainer().set(beenNotified, PersistentDataType.BOOLEAN, Boolean.TRUE);
-    }
-
-    public boolean hasBeenNotified(Player player) {
-        PersistentDataContainer playerPDC = player.getPersistentDataContainer();
-        return playerPDC.getOrDefault(beenNotified, PersistentDataType.BOOLEAN, Boolean.FALSE);
-    }
 }
