@@ -9,6 +9,7 @@ import simplexity.scythe.commands.subcommands.HelpCommand;
 import simplexity.scythe.commands.subcommands.ReloadCommand;
 import simplexity.scythe.commands.subcommands.ToggleCommand;
 import simplexity.scythe.config.ConfigHandler;
+import simplexity.scythe.listeners.BlockBreakListener;
 import simplexity.scythe.listeners.InteractListener;
 
 import java.util.Objects;
@@ -37,6 +38,7 @@ public final class Scythe extends JavaPlugin {
         }
         Objects.requireNonNull(this.getCommand("scythe")).setExecutor(new CommandHandler());
         this.getServer().getPluginManager().registerEvents(new InteractListener(), this);
+        this.getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
         this.saveDefaultConfig();
         getConfig().options().copyDefaults(true);
         saveConfig();

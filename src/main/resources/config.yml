@@ -1,43 +1,54 @@
 #Scythe
-left-click:
-  replant:
-    enabled: true
-    require-tool: false
-right-click:
-  harvest:
-    enabled: true
-    require-tool: false
-  replant:
-    enabled: true
-    require-tool: false
-replant:
+auto-replant:
+  enabled: true
   require-seeds: false
+  require-tool: false
+  delay-ticks: 1
+right-click-harvest:
+  enabled: true
+  require-tool: false
 #Only applies if "require-tool" is true in any of the above categories
 tools:
-  # Note: In vanilla, harvesting normally crops does NOT use durability
-  harvest-uses-durability: false
-  prevent-tool-break: true
-  minimum-durability: 10
-replant-tools:
-  - "minecraft:wooden_hoe"
-  - "minecraft:stone_hoe"
-  - "minecraft:iron_hoe"
-  - "minecraft:golden_hoe"
-  - "minecraft:diamond_hoe"
-  - "minecraft:netherite_hoe"
-# Item models should be declared like "namespace:id"
-replant-tools-item-models: []
-play-sounds: true
-sound: BLOCK_CROP_BREAK
-sound-volume: 1
-sound-pitch: 1
-break-particles: true
-#Please choose a particle from this list: https://jd.papermc.io/paper/1.20/org/bukkit/Particle.html
-particle: CRIT
-particle-count: 4
-# how far from the center particles should go
-particle-spread: 0.5
-#crops the plugin should work on
+  enabled-tools:
+    - "minecraft:wooden_hoe"
+    - "minecraft:stone_hoe"
+    - "minecraft:iron_hoe"
+    - "minecraft:golden_hoe"
+    - "minecraft:diamond_hoe"
+    - "minecraft:netherite_hoe"
+  # Item models should be declared like "namespace:id"
+  required-item-models: []
+  # Note: In vanilla, harvesting normally crops does NOT use durability.
+  # This will cause the tool to lose durability on right-click harvest ONLY
+  durability:
+    harvest-uses-durability: false
+    replant-uses-durability: false
+    prevent-tool-break: true
+    minimum-durability: 10
+# Please choose a sound from this list: https://jd.papermc.io/paper/1.21.4/org/bukkit/Sound.html
+sounds:
+  enabled: true
+  break-sound: BLOCK_CROP_BREAK
+  plant-sound: ITEM_CROP_PLANT
+  # between 0 and 2
+  volume: 1.0
+  # between 0 and 2
+  pitch: 1.0
+# Please choose a particle from this list: https://jd.papermc.io/paper/1.20/org/bukkit/Particle.html
+particles:
+  harvest:
+    enabled: true
+    particle: BLOCK
+    count: 40
+    # how far from the center particles should go, in blocks
+    spread: 0.5
+  replant:
+    enabled: true
+    particle: HAPPY_VILLAGER
+    count: 2
+    spread: 0.5
+# Crops the plugin should work on, list of materials is here: https://jd.papermc.io/paper/1.21.4/org/bukkit/Material.html
+# Note, the material must have the BlockData of 'Ageable' - note, most other ageable blocks in the list don't work as intended.
 allowed-crops:
   - BEETROOTS
   - CARROTS
@@ -45,3 +56,5 @@ allowed-crops:
   - NETHER_WART
   - POTATOES
   - WHEAT
+  # - PUMPKIN_STEM
+  # - MELON_STEM

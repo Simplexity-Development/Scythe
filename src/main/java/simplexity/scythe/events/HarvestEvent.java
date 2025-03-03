@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,15 +14,13 @@ public class HarvestEvent extends Event implements Cancellable {
     private boolean cancelled;
     private Player player;
     private Block block;
-    private boolean isRightClick;
 
 
     private static final HandlerList handlerList = new HandlerList();
 
-    public HarvestEvent(Player player, Block block, boolean isRightClick) {
+    public HarvestEvent(Player player, Block block) {
         this.player = player;
         this.block = block;
-        this.isRightClick = isRightClick;
     }
 
 
@@ -94,28 +91,8 @@ public class HarvestEvent extends Event implements Cancellable {
     }
 
     /**
-     * Returns a boolean value that indicates whether the interaction was a right-click action.
-     * <br>The method returns the value of the "isRightClick" boolean field, which is set by the calling code to indicate whether the interaction was a right-click action or not.
-     * <br>If the value is true, it means that the interaction was a right-click action; otherwise, it was not.
-     *
-     * @return boolean
-     */
-
-    public boolean isRightClick() {
-        return isRightClick;
-    }
-
-    /**
-     * Sets whether this event should be run with right-click conditions or not
-     * @param rightClick boolean
-     */
-
-    public void setRightClick(boolean rightClick) {
-        isRightClick = rightClick;
-    }
-
-    /**
      * Sets the block this event will run on
+     *
      * @param block Block
      */
 
@@ -125,6 +102,7 @@ public class HarvestEvent extends Event implements Cancellable {
 
     /**
      * Sets the player that this event will involve and track with coreprotect
+     *
      * @param player Player
      */
     public void setPlayer(Player player) {

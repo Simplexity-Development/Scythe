@@ -17,15 +17,13 @@ public class ReplantEvent extends Event implements Cancellable {
     private Player player;
     private Block block;
     private BlockData blockData;
-    private final boolean rightClick;
 
     private static final HandlerList handlerList = new HandlerList();
 
-    public ReplantEvent(Player player, Block block, BlockData blockData, boolean rightClick) {
+    public ReplantEvent(Player player, Block block, BlockData blockData) {
         this.player = player;
         this.block = block;
         this.blockData = blockData;
-        this.rightClick = rightClick;
     }
 
     /**
@@ -53,15 +51,6 @@ public class ReplantEvent extends Event implements Cancellable {
      */
     public Block getBlock() {
         return block;
-    }
-
-    /**
-     * Gets whether this event was called by someone right-clicking a block or not
-     *
-     * @return boolean
-     */
-    public boolean isRightClick() {
-        return rightClick;
     }
 
 
