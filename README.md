@@ -18,6 +18,7 @@
   command. This requires the `scythe.toggle` permission.
 * `/scythe reload`: Reloads the configuration for the plugin. This requires the `scythe.reload` permission.
 
+* `/scythe-item [player]` : If custom items are enabled in config, will give the user a scythe item if they have `scythe.item` permission, or if the user has `scythe.item.others` permission, will give the provided player a scythe item
 ### Permissions
 
 * `scythe.use` : Base permission for access to Scythe functionality.
@@ -25,6 +26,9 @@
 * `scythe.use.replant` : Allows a player to auto-replant crops using scythe functionality
 * `scythe.toggle` : Allows the player to toggle the feature for themselves using the /scythe toggle command.
 * `scythe.reload` : Allows the player to reload the configuration using the /scythe reload command.
+* `scythe.item` : Allows the player to obtain a scythe item created in the config
+* `scythe.item.others` : Allows the player to send a scythe item to another player
+* `scythe.bypass.cooldown` : Allows the player to bypass the configured command cooldown for the scythe item command
 
 ## Config
 
@@ -51,6 +55,21 @@ tools:
     - "minecraft:netherite_hoe"
   # Item models should be declared like "namespace:id"
   required-item-models: [ ] # Do you have any specific item models you're using on tools that make them look different? If so, declare them here
+  # If you want to use a custom item, please note that the item validity is checked by a pdc tag, so old versions will still be valid
+  # This also means other players cannot make fake versions, but it also means even if you copy the info here, it won't be a valid tool
+  # If custom item is enabled, the previous settings for valid item types and item models will be ignored.
+  custom-item:
+    enabled: false
+    custom-name: "<yellow>Scythe</yellow>"
+    lore:
+      - "<white>This is some cool lore</white>"
+      - "<green>Idk you should probably change this</green>"
+      - "<gradient:blue:green>Colors and stuff yay</gradient>"
+    item-type: WOODEN_HOE
+    item-model: ""
+    enchantment-glint: true
+    max-durability: 2031
+    command-cooldown-seconds: 600  
   # Note: In vanilla, harvesting normally crops does NOT use durability.
   # This will cause the tool to lose durability on right-click harvest ONLY
   durability:

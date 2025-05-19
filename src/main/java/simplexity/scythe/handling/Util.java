@@ -5,7 +5,6 @@ import net.coreprotect.CoreProtectAPI;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
@@ -15,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import simplexity.scythe.commands.ScytheItem;
 import simplexity.scythe.commands.subcommands.ToggleCommand;
 import simplexity.scythe.config.ConfigHandler;
 import simplexity.scythe.hooks.CoreProtectHook;
@@ -35,17 +35,30 @@ public class Util {
     private final CoreProtectAPI coreProtectAPI = CoreProtectHook.getInstance().getCoreProtect();
 
 
-    public boolean requiredToolUsed(Player player) {
-        Material itemUsed = player.getInventory().getItemInMainHand().getType();
-        return ConfigHandler.getInstance().getEnabledTools().contains(itemUsed)
-               && hasItemModel(player.getInventory().getItemInMainHand());
+    public boolean allowedToolUsed(Player player) {
+        ItemStack itemUsed = player.getInventory().getItemInMainHand();
+        if (ConfigHandler.getInstance().isCustomItemEnabled()) {
+            return hasPdcTag(itemUsed);
+        }
+        Material itemMaterialUsed = itemUsed.getType();
+        if (!allowedToolMaterialUsed(itemMaterialUsed)) return false;
+        return hasItemModel(itemUsed);
+    }
+
+
+    public boolean allowedToolMaterialUsed(Material material) {
+        return ConfigHandler.getInstance().getEnabledTools().contains(material);
     }
 
     private boolean hasItemModel(ItemStack item) {
-        Set<NamespacedKey> itemModels = ConfigHandler.getInstance().getRequiredItemModels();
+        Set<Key> itemModels = ConfigHandler.getInstance().getRequiredItemModels();
         if (itemModels.isEmpty()) return true;
         Key modelKey = item.getData(DataComponentTypes.ITEM_MODEL);
-        return itemModels.contains((NamespacedKey) modelKey);
+        return itemModels.contains(modelKey);
+    }
+
+    private boolean hasPdcTag(ItemStack item) {
+        return item.getPersistentDataContainer().has(ScytheItem.scytheItemKey);
     }
 
     public void handleSound(Block block, Sound sound) {

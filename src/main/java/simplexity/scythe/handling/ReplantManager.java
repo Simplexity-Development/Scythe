@@ -23,7 +23,7 @@ public class ReplantManager {
         if (!player.hasPermission(ScythePermission.USE_REPLANT.getPermission())) return false;
         if (!Util.getInstance().playerHasToggleEnabled(player)) return false;
         if (player.isSneaking()) return false;
-        if (ConfigHandler.getInstance().autoReplantRequiresTool() && !Util.getInstance().requiredToolUsed(player))
+        if (ConfigHandler.getInstance().autoReplantRequiresTool() && !Util.getInstance().allowedToolUsed(player))
             return false;
         if (ConfigHandler.getInstance().requireSeeds() && !SeedsManager.getInstance().hasSeeds(player, blockData.getPlacementMaterial()))
             return false;

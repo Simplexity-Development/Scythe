@@ -5,7 +5,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -32,16 +31,16 @@ public class DurabilityManager {
 
     public boolean durabilitySuccessfullyRemoved(Player player) {
         ItemStack item = player.getInventory().getItemInMainHand();
-        if (!Util.getInstance().requiredToolUsed(player)) {
+        if (!Util.getInstance().allowedToolUsed(player)) {
             if (!hasBeenNotified(player)) {
-                notifyPlayer(player, Message.MUST_HOLD_TOOL.getMessage());
+                notifyPlayer(player, Message.ERROR_MUST_HOLD_TOOL.getMessage());
                 return false;
             }
             return false;
         }
         if (!toolHasEnoughDurability(item)) {
             if (!hasBeenNotified(player)) {
-                notifyPlayer(player, Message.YOUR_TOOL_IS_ALMOST_BROKEN.getMessage());
+                notifyPlayer(player, Message.ERROR_YOUR_TOOL_IS_ALMOST_BROKEN.getMessage());
                 return false;
             }
             return false;

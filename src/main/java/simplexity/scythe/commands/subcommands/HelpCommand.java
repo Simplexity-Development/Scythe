@@ -20,6 +20,6 @@ public class HelpCommand extends SubCommand {
                + "\n" + Message.HELP_TOGGLE.getMessage()));
             return;
         }
-        sender.sendRichMessage(Message.NO_PERMISSION.getMessage());
+        sender.sendRichMessage(Message.ERROR_NO_PERMISSION.getMessage());
     }
 }

@@ -1,6 +1,12 @@
 package simplexity.scythe.config;
 
 
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.ItemLore;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -9,6 +15,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
 import simplexity.scythe.Scythe;
 
 import java.util.ArrayList;
@@ -32,19 +39,22 @@ public class ConfigHandler {
         return instance;
     }
 
+    private final MiniMessage miniMessage = Scythe.getMiniMessage();
 
     private final Logger logger = Scythe.getScytheLogger();
     private boolean autoReplantEnabled, requireSeeds, autoReplantRequiresTool, rightClickHarvest,
             rightClickHarvestRequiresTool, harvestUsesToolDurability, replantUsesToolDurability, preventToolBreak,
-            soundsEnabled, harvestParticlesEnabled, replantParticlesEnabled;
+            soundsEnabled, harvestParticlesEnabled, replantParticlesEnabled, customItemEnabled;
     private Sound breakSound, plantSound;
     private Particle breakParticle, replantParticle;
     private float soundVolume, soundPitch;
     private double harvestParticleSpread, replantParticleSpread;
     private int harvestParticleCount, replantParticleCount, minimumDurability, delayTicks;
+    private long commandCooldownSeconds;
+    private ItemStack scytheItem;
     private final ArrayList<Material> configuredCrops = new ArrayList<>();
     private final ArrayList<Material> enabledTools = new ArrayList<>();
-    private final HashSet<NamespacedKey> requiredItemModels = new HashSet<>();
+    private final HashSet<Key> requiredItemModels = new HashSet<>();
 
     public void configParser() {
         FileConfiguration config = Scythe.getInstance().getConfig();
@@ -59,6 +69,8 @@ public class ConfigHandler {
         soundsEnabled = config.getBoolean("sounds.enabled", true);
         harvestParticlesEnabled = config.getBoolean("particles.harvest.enabled", true);
         replantParticlesEnabled = config.getBoolean("particles.replant.enabled", true);
+        customItemEnabled = config.getBoolean("tools.custom-item.enabled", false);
+        if (customItemEnabled) validateScythe(config);
         if (soundsEnabled) loadSoundConfigurations(config);
         if (replantParticlesEnabled || harvestParticlesEnabled) loadParticleInfo(config);
         if (autoReplantRequiresTool || rightClickHarvestRequiresTool) loadToolInfo(config);
@@ -102,7 +114,6 @@ public class ConfigHandler {
 
     }
 
-    @SuppressWarnings("deprecation")
     private void checkSound(FileConfiguration config) {
         String configuredBreakSound = config.getString("sounds.break-sound");
         String configuredReplantSound = config.getString("sounds.plant-sound");
@@ -155,13 +166,8 @@ public class ConfigHandler {
         List<String> itemModelStrings = config.getStringList("replant-tools-item-models");
         if (itemModelStrings.isEmpty()) return;
         for (String itemModel : itemModelStrings) {
-            String[] split = itemModel.split(":");
-            if (split.length != 2) {
-                logger.warning(itemModel + " is not a valid item model, these must be declared as \"namespace:location\", please check your syntax");
-                continue;
-            }
-            NamespacedKey key = new NamespacedKey(split[0], split[1]);
-            requiredItemModels.add(key);
+            Key key = getKeyFromString(itemModel);
+            if (key != null) requiredItemModels.add(key);
         }
     }
 
@@ -209,6 +215,52 @@ public class ConfigHandler {
         }
     }
 
+    private void validateScythe(FileConfiguration config){
+        String customNameString = config.getString("tools.custom-item.custom-name", "<yellow>Scythe</yellow>");
+        String itemTypeString = config.getString("tools.custom-item.item-type", "WOODEN_HOE");
+        String itemModelString = config.getString("tools.custom-item.item-model");
+        List<String> itemLoreStrings = config.getStringList("tools.custom-item.lore");
+        int maxDurability = config.getInt("tools.custom-item.max-durability", 2031);
+        boolean enchantmentGlint = config.getBoolean("tools.custom-item.enchantment-glint", true);
+        commandCooldownSeconds = config.getLong("tools.custom-item.command-cooldown-seconds", 600);
+        Component customName = miniMessage.deserialize(customNameString).decoration(TextDecoration.ITALIC, false);
+        ItemLore.Builder loreBuilder = ItemLore.lore();
+        for (String loreString : itemLoreStrings) {
+            Component customLore = miniMessage.deserialize(loreString).decoration(TextDecoration.ITALIC, false);
+            loreBuilder.addLine(customLore);
+        }
+        ItemLore lore = loreBuilder.build();
+        Material itemType = Material.getMaterial(itemTypeString);
+        if (itemType == null) {
+            logger.warning("The item type '" + itemTypeString + "' is invalid, please choose an item type from https://jd.papermc.io/paper/1.21.5/org/bukkit/inventory/ItemType.html");
+            logger.warning("Setting item type to 'WOODEN_HOE' until a valid type is supplied");
+            itemType = Material.WOODEN_HOE;
+        }
+        ItemStack tempScytheItem = ItemStack.of(itemType);
+        tempScytheItem.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, enchantmentGlint);
+        tempScytheItem.setData(DataComponentTypes.MAX_STACK_SIZE, 1);
+        tempScytheItem.setData(DataComponentTypes.MAX_DAMAGE, maxDurability);
+        tempScytheItem.setData(DataComponentTypes.CUSTOM_NAME, customName);
+        tempScytheItem.setData(DataComponentTypes.LORE, lore);
+
+        if (itemModelString == null || itemModelString.isEmpty()) {
+            scytheItem = tempScytheItem;
+            return;
+        }
+        Key key = getKeyFromString(itemModelString);
+        if (key != null) tempScytheItem.setData(DataComponentTypes.ITEM_MODEL, key);
+        scytheItem = tempScytheItem;
+    }
+
+    private Key getKeyFromString(String string){
+        String[] split = string.split(":");
+        if (split.length != 2) {
+            logger.warning(string + " is not a valid namespaced key, these must be declared as \"namespace:location\", please check your syntax");
+            return null;
+        }
+        return new NamespacedKey(split[0], split[1]);
+    }
+
 
     public boolean allowRightClickHarvest() {
         return rightClickHarvest;
@@ -223,7 +275,7 @@ public class ConfigHandler {
         return Collections.unmodifiableList(enabledTools);
     }
 
-    public Set<NamespacedKey> getRequiredItemModels() {
+    public Set<Key> getRequiredItemModels() {
         return Collections.unmodifiableSet(requiredItemModels);
     }
 
@@ -314,5 +366,17 @@ public class ConfigHandler {
 
     public int getReplantParticleCount() {
         return replantParticleCount;
+    }
+
+    public boolean isCustomItemEnabled() {
+        return customItemEnabled;
+    }
+
+    public ItemStack getScytheItem() {
+        return scytheItem;
+    }
+
+    public long getCommandCooldownSeconds() {
+        return commandCooldownSeconds;
     }
 }

@@ -18,6 +18,20 @@ tools:
     - "minecraft:netherite_hoe"
   # Item models should be declared like "namespace:id"
   required-item-models: []
+  # If custom item is enabled, 'enabled tools' and 'required item models' will be overridden
+  # Item type must be a hoe of some kind if it's going to till the ground
+  custom-item:
+    enabled: false
+    custom-name: "<yellow>Scythe</yellow>"
+    lore:
+      - "<white>This is some cool lore</white>"
+      - "<green>Idk you should probably change this</green>"
+      - "<gradient:blue:green>Colors and stuff yay</gradient>"
+    item-type: WOODEN_HOE
+    item-model: ""
+    enchantment-glint: true
+    max-durability: 2031
+    command-cooldown-seconds: 600
   # Note: In vanilla, harvesting normally crops does NOT use durability.
   # This will cause the tool to lose durability on right-click harvest ONLY
   durability:
@@ -25,6 +39,8 @@ tools:
     replant-uses-durability: false
     prevent-tool-break: true
     minimum-durability: 10
+
+
 # Please choose a sound from this list: https://jd.papermc.io/paper/1.21.4/org/bukkit/Sound.html
 sounds:
   enabled: true

@@ -3,8 +3,17 @@ version: '${project.version}'
 main: simplexity.scythe.Scythe
 author: RhythmicSystem
 website: https://github.com/Simplexity-Development/Scythe
-api-version: 1.21.4
+api-version: 1.21.5
 permissions:
+  scythe.item:
+    description: Allows the user to summon a scythe item
+    default: op
+  scythe.item.others:
+    description: Allows the user to send another user a scythe item
+    default: op
+  scythe.bypass.cooldown:
+    description: Allows user to bypass the configured command cooldown
+    default: op
   scythe.use:
     description: Allow players to use Scythe Functionality
     default: true
@@ -28,6 +37,9 @@ commands:
   scythe:
     description: base command for Scythe plugin
     permission: scythe.use
+  scythe-item:
+    description: gives the user or provided user a scythe item
+    permission: scythe.item
 softdepend:
   - CoreProtect
 

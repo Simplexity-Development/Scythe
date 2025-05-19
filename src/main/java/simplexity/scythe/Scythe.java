@@ -5,6 +5,7 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import simplexity.scythe.commands.CommandHandler;
+import simplexity.scythe.commands.ScytheItem;
 import simplexity.scythe.commands.subcommands.HelpCommand;
 import simplexity.scythe.commands.subcommands.ReloadCommand;
 import simplexity.scythe.commands.subcommands.ToggleCommand;
@@ -36,7 +37,8 @@ public final class Scythe extends JavaPlugin {
             this.getLogger().warning("net.kyori.adventure.text.Component");
             this.getServer().getPluginManager().disablePlugin(this);
         }
-        Objects.requireNonNull(this.getCommand("scythe")).setExecutor(new CommandHandler());
+        this.getCommand("scythe").setExecutor(new CommandHandler());
+        this.getCommand("scythe-item").setExecutor(new ScytheItem());
         this.getServer().getPluginManager().registerEvents(new InteractListener(), this);
         this.getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
         this.saveDefaultConfig();

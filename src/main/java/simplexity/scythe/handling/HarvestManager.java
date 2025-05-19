@@ -26,7 +26,7 @@ public class HarvestManager {
         if (!(block.getBlockData() instanceof Ageable ageable)) return false;
         if (!Util.getInstance().isCropFullGrown(ageable)) return false;
         if (!ConfigHandler.getInstance().getConfiguredCrops().contains(block.getType())) return false;
-        if (ConfigHandler.getInstance().rightClickHarvestRequiresTool() && !Util.getInstance().requiredToolUsed(player))
+        if (ConfigHandler.getInstance().rightClickHarvestRequiresTool() && !Util.getInstance().allowedToolUsed(player))
             return false;
         return true;
     }

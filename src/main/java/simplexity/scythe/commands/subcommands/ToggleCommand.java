@@ -19,11 +19,11 @@ public class ToggleCommand extends SubCommand {
 
     public void execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendRichMessage(Message.NOT_A_PLAYER.getMessage());
+            sender.sendRichMessage(Message.ERROR_NOT_A_PLAYER.getMessage());
             return;
         }
         if (!player.hasPermission(ScythePermission.TOGGLE_COMMAND.getPermission())) {
-            player.sendRichMessage(Message.NO_PERMISSION.getMessage());
+            player.sendRichMessage(Message.ERROR_NO_PERMISSION.getMessage());
             return;
         }
         ToggleEvent toggleEvent = new ToggleEvent(player, toggleKey);

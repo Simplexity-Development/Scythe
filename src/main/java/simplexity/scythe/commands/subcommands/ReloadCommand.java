@@ -16,7 +16,7 @@ public class ReloadCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (!sender.hasPermission(ScythePermission.RELOAD_COMMAND.getPermission())) {
-            sender.sendRichMessage(Message.NO_PERMISSION.getMessage());
+            sender.sendRichMessage(Message.ERROR_NO_PERMISSION.getMessage());
             return;
         }
         Scythe.getInstance().reloadConfig();
